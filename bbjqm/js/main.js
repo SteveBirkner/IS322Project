@@ -94,9 +94,11 @@ function search(str){
     },
     dataType: 'jsonp',
  
-});
-var rpp = "25"; // number of tweets to return
+    });
+}
+
 function twitSearch(q,rpp){
+    var rpp = "25"; // number of tweets to return
     $.ajax({
        url : "http://search.twitter.com/search.json?q=" + escape(q) + "&callback=?&lang=en&rpp=" + rpp,
        dataType : "json" ,
@@ -114,5 +116,3 @@ function twitSearch(q,rpp){
     });
     
 }
-
-//twitSearch(q,rpp);
