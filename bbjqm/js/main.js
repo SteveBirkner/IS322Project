@@ -91,7 +91,7 @@ $(document).keypress(function(e) {
     });
 function search(str){
     var apikey = "d9cbk342np3k8jj9ntmybz5f";
-    var url = "http://api.remix.bestbuy.com/v1/products(search=" + escape(str) + ")?apiKey=" + apikey + "&show=name,sku,regularPrice&sort=regularPrice.asc&format=json";
+    var url = "http://api.remix.bestbuy.com/v1/products(search=" + escape(str) + ")?apiKey=" + apikey + "&show=name,sku,regularPrice,image,longDescriptionHTML&sort=regularPrice.asc&format=json";
     $.ajax({
     type: "GET",
     url: url,
