@@ -80,3 +80,39 @@ $(document).ready(function () {
     app = new AppRouter();
     Backbone.history.start();
 });
+
+function search(str){
+    var apikey = "d9cbk342np3k8jj9ntmybz5f";
+    var url = "http://api.remix.bestbuy.com/v1/products(search=" + escape(str) + ")?apiKey=" + apikey + "&show=name,sku,regularPrice&sort=regularPrice.asc&format=json";
+    $.ajax({
+    type: "GET",
+    url: url,
+    cache: true,
+    crossDomain:true,
+    success: function(data) {
+        console.log(data);
+    },
+    dataType: 'jsonp',
+ 
+});
+var rpp = "25"; // number of tweets to return
+function twitSearch(q,rpp){
+    $.ajax({
+       url : "http://search.twitter.com/search.json?q=" + escape(q) + "&callback=?&lang=en&rpp=" + rpp,
+       dataType : "json" ,
+       timeout : 15000,
+       
+       success : function(data){
+        console.log(data);
+       },
+       
+       error: function() {
+        alert("Twitter Failed");
+       },
+       
+       
+    });
+    
+}
+
+//twitSearch(q,rpp);
