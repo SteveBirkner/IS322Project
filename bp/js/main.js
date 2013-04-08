@@ -31,3 +31,32 @@ setInterval(function () {
   statusElem.className = navigator.onLine ? 'online' : 'offline';
   statusElem.innerHTML = navigator.onLine ? 'online' : 'offline';  
 }, 250);
+
+
+/* Twitter API */
+
+var q = "Macbook Air"; // Test var for search
+var rpp = "25"; // number of tweets to return
+
+function twitSearch(q,rpp){
+    
+    $.ajax({
+       url : "http://search.twitter.com/search.json?q=" + escape(q) + "&callback=?",
+       dataType : "json" ,
+       timeout : 15000,
+       
+       success : function(data){
+        console.log(data);
+       },
+       
+       error: function() {
+        alert("Twitter Failed");
+       },
+       
+       
+    });
+    
+}
+
+twitSearch(q,rpp);
+
