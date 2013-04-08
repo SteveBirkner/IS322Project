@@ -5,9 +5,34 @@ window.HomeView = Backbone.View.extend({
     render:function (eventName) {
         $(this.el).html(this.template());
         return this;
+    },
+    events: {
+        //enter key triggers onEnter event
+        "keypress":"onEnter"
+    },
+    onEnter: function(e){
+        if(e.which == 13) {
+            //if enter key and search isn't empty, do search
+            var s = $("#search").val();
+            if(s.length > 0){
+                //should add a limit here to prevent "refresh" spamming
+                search(s);
+                //trying to send result set to result page to display the output
+                //this way doesn't work
+                //this.changePage(new bbResultsView({results: search(s)}));
+            }
+        }
     }
 });
+window.bbResultsView = Backbone.View.extend({
 
+    template:_.template($('#bbresults').html()),
+
+    render:function (eventName) {
+        $(this.el).html(this.template());
+        return this;
+    }
+});
 window.Page1View = Backbone.View.extend({
 
     template:_.template($('#page1').html()),
@@ -33,7 +58,8 @@ var AppRouter = Backbone.Router.extend({
     routes:{
         "":"home",
         "page1":"page1",
-        "page2":"page2"
+        "page2":"page2",
+        "results":"bbresults"
     },
 
     initialize:function () {
@@ -49,7 +75,10 @@ var AppRouter = Backbone.Router.extend({
         console.log('#home');
         this.changePage(new HomeView());
     },
-
+    bbresults:function(){
+        console.log('#bbresults');
+        this.changePage(new bbResultsView());
+    },
     page1:function () {
         console.log('#page1');
         this.changePage(new Page1View());
@@ -80,15 +109,7 @@ $(document).ready(function () {
     app = new AppRouter();
     Backbone.history.start();
 });
-$(document).keypress(function(e) {
-        if(e.which == 13) {
-            var s = $("#search").val();
-            if(s.length > 0){
-                console.log("clicked");
-                search(s);
-            }
-        }
-    });
+
 function search(str){
     var apikey = "d9cbk342np3k8jj9ntmybz5f";
     var url = "http://api.remix.bestbuy.com/v1/products(search=" + escape(str) + ")?apiKey=" + apikey + "&show=name,sku,regularPrice,image,longDescriptionHTML&sort=regularPrice.asc&format=json";
@@ -98,11 +119,12 @@ function search(str){
     cache: true,
     crossDomain:true,
     success: function(data) {
-        console.log(data);
+        return console.log(data);
     },
     dataType: 'jsonp',
  
     });
+    return null;
 }
 
 function twitSearch(q,rpp){

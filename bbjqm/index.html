@@ -14,7 +14,7 @@
 
         <div data-role="content">
             <h3>Search</h3>
-            <div><input id="search" type="search" results /><div id="display">Display area</div>
+            <div><div><input id="search" type="search" results /><button type="button">Favorites</button></div><div id="display">Home View</div>
             
             <p>Navigate to:</p>
             <ul data-role="listview"  data-inset="true">
@@ -24,7 +24,23 @@
         </div>
 
     </script>
+    <script type="text/template" id="bbresults">
 
+        <div data-role="header">
+            <a href="#" data-icon="back" class="back ui-btn-left">Back</a>
+            <h1>Results</h1>
+        </div>
+
+        <div data-role="content">
+            <p>Results</p>
+            <p>Navigate to:</p>
+            <ul data-role="listview" data-inset="true">
+                <li><a href="#">Home</a></li>
+                <li><a href="#page2">Product View</a></li>
+            </ul>
+        </div>
+
+    </script>
     <script type="text/template" id="page1">
 
         <div data-role="header">
