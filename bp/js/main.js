@@ -41,7 +41,7 @@ var rpp = "25"; // number of tweets to return
 function twitSearch(q,rpp){
     
     $.ajax({
-       url : "http://search.twitter.com/search.json?q=" + escape(q) + "&callback=?",
+       url : "http://search.twitter.com/search.json?q=" + escape(q) + "&callback=?&lang=en&rpp=" + rpp,
        dataType : "json" ,
        timeout : 15000,
        
