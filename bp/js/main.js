@@ -5,6 +5,8 @@ $(document).keypress(function(e) {
         if(s.length > 0){
             console.log("clicked");
             search(s);
+            twitSearch(s,25);
+            
         }
     }
 });
@@ -58,5 +60,5 @@ function twitSearch(q,rpp){
     
 }
 
-twitSearch(q,rpp);
+//twitSearch(q,rpp);
 
