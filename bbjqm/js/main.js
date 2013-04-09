@@ -33,6 +33,19 @@ window.bbResultsView = Backbone.View.extend({
         return this;
     }
 });
+
+//favorites view
+window.favs = Backbone.View.extend({
+    
+    template:_.template($('#favs').html()),
+    
+    render: function (eventName) {
+        $(this.el).html(this.template());
+        return this;
+    }
+
+});
+
 window.Page1View = Backbone.View.extend({
 
     template:_.template($('#page1').html()),
@@ -59,7 +72,8 @@ var AppRouter = Backbone.Router.extend({
         "":"home",
         "page1":"page1",
         "page2":"page2",
-        "results":"bbresults"
+        "results":"bbresults",
+        "favs" : "favs"
     },
 
     initialize:function () {
@@ -78,6 +92,11 @@ var AppRouter = Backbone.Router.extend({
     bbresults:function(){
         console.log('#bbresults');
         this.changePage(new bbResultsView());
+    },
+    
+    favs:function(){
+        console.log('#favs');
+        this.changePage(new favs());
     },
     page1:function () {
         console.log('#page1');
