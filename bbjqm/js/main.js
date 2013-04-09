@@ -35,19 +35,29 @@ window.bbResultsView = Backbone.View.extend({
 });
 
 //Result Model
-var Result = Backbone.Model.extend({
+var result = Backbone.Model.extend({
    initialize: function() {
         console.log("Result active");
    }
 });
 
 //Results Collection
-var ResultsList = Backbone.Collection.extend({
-   model: Result 
+var resultsList = Backbone.Collection.extend({
+   model: result 
 });
 
+var tweet = Backbone.Model.extend({
+    initialize: function() {
+    
+        console.log("TweetTweet");
+    }
 
+});
 
+var tweetsList = Backbone.collection({
+    model: tweet    
+    
+});
 
 
 //favorites view
