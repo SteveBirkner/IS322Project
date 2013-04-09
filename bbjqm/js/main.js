@@ -35,7 +35,7 @@ window.bbResultsView = Backbone.View.extend({
 });
 
 //favorites view
-window.favs = Backbone.View.extend({
+window.favsView = Backbone.View.extend({
     
     template:_.template($('#favs').html()),
     
@@ -89,14 +89,14 @@ var AppRouter = Backbone.Router.extend({
         console.log('#home');
         this.changePage(new HomeView());
     },
-    bbresults:function(){
+    bbresults:function() {
         console.log('#bbresults');
         this.changePage(new bbResultsView());
     },
     
-    favs:function(){
+    favs:function() {
         console.log('#favs');
-        this.changePage(new favs());
+        this.changePage(new favsView());
     },
     page1:function () {
         console.log('#page1');
