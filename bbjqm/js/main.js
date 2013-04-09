@@ -38,7 +38,14 @@ window.bbResultsView = Backbone.View.extend({
 var result = Backbone.Model.extend({
    initialize: function() {
         console.log("Result active");
+   },
+   
+   // will need to pass the function the object and set aspects or object to them
+   attributes: function() {
+        this.set({name: "x"}); //will have to change later so we can add the object into it
+        
    }
+   
 });
 
 //Results Collection
@@ -50,11 +57,16 @@ var tweet = Backbone.Model.extend({
     initialize: function() {
     
         console.log("TweetTweet");
-    }
+    },
+    //this will get the twitter id and the tweet text
+     attributes: function() {
+        this.set({name: "x"}); //will have to change later so we can add the object into it
+        
+   }
 
 });
 
-var tweetsList = Backbone.collection({
+var tweetsList = Backbone.Collection.extend({
     model: tweet    
     
 });
