@@ -34,13 +34,19 @@ window.bbResultsView = Backbone.View.extend({
     }
 });
 
-Result = Backbone.Model.extend({
+//Result Model
+var Result = Backbone.Model.extend({
    initialize: function() {
         console.log("Result active");
    }
 });
 
-var res = new Result();
+//Results Collection
+var ResultsList = Backbone.Collection.extend({
+   model: Result 
+});
+
+
 
 
 
