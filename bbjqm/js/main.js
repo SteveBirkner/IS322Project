@@ -19,7 +19,7 @@ window.HomeView = Backbone.View.extend({
                 search(s);
                 //trying to send result set to result page to display the output
                 //this way doesn't work
-                //this.changePage(new bbResultsView({results: search(s)}));
+                //this.changePage(new bbResultsView());
             }
         }
     }
@@ -34,6 +34,16 @@ window.bbResultsView = Backbone.View.extend({
     }
 });
 
+Result = Backbone.Model.extend({
+   initialize: function() {
+        console.log("Result active");
+   }
+});
+
+var res = new Result();
+
+
+
 //favorites view
 window.favsView = Backbone.View.extend({
     
@@ -45,6 +55,8 @@ window.favsView = Backbone.View.extend({
     }
 
 });
+
+
 
 window.Page1View = Backbone.View.extend({
 
