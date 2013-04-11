@@ -15,7 +15,6 @@ window.HomeView = Backbone.View.extend({
             //if enter key and search isn't empty, do search
             var s = $("#search").val();
             if(s.length > 0 && s != ""){
-                //should add a limit here to prevent "refresh" spamming
                 //search(s);
                 //trying to send result set to result page to display the output
                 //this way doesn't work
@@ -30,7 +29,6 @@ window.HomeView = Backbone.View.extend({
 });
 
 window.bbResultsView = Backbone.View.extend({
-
     template:_.template($('#bbresults').html()),
     initialize: function(){
        // this.model.bind("change", this.render,this);
@@ -190,8 +188,7 @@ function search(str){
     cache: true,
     crossDomain:true,
     success: function(data) {
-        //console.log(data);
-        //return (data);
+        console.log(data);
     },
     dataType: 'jsonp',
  
