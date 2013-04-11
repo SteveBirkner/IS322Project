@@ -48,6 +48,8 @@ var result = Backbone.Model.extend({
    
 });
 
+var res = new result();
+
 //Results Collection
 var resultsList = Backbone.Collection.extend({
    model: result 
@@ -186,10 +188,10 @@ function search(str){
     return null;
 }
 
-function twitSearch(q,rpp){
-    var rpp = "25"; // number of tweets to return
+function twitSearch(q){
+     // number of tweets to return
     $.ajax({
-       url : "http://search.twitter.com/search.json?q=" + escape(q) + "&callback=?&lang=en&rpp=" + rpp,
+       url : "http://search.twitter.com/search.json?q=" + escape(q) + "&callback=?&lang=en&rpp=25",
        dataType : "json" ,
        timeout : 15000,
        
@@ -205,3 +207,6 @@ function twitSearch(q,rpp){
     });
     
 }
+
+
+
