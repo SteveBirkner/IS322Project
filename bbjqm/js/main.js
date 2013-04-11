@@ -14,20 +14,29 @@ window.HomeView = Backbone.View.extend({
         if(e.which == 13) {
             //if enter key and search isn't empty, do search
             var s = $("#search").val();
-            if(s.length > 0){
+            if(s.length > 0 && s != ""){
                 //should add a limit here to prevent "refresh" spamming
-                search(s);
+                //search(s);
                 //trying to send result set to result page to display the output
                 //this way doesn't work
-                //this.changePage(new bbResultsView());
+                //this.changePage(new bbResultsView({results: search(s)}));
+                //localStorage.set("search", s);
+                console.log("Search: " + s);
+                this.options.m.changePage(new bbResultsView({results: s}));
+                
             }
         }
     }
 });
+
 window.bbResultsView = Backbone.View.extend({
 
     template:_.template($('#bbresults').html()),
-
+    initialize: function(){
+       // this.model.bind("change", this.render,this);
+       console.log("Rec. Search: " + this.options.results);
+       search(this.options.results);
+    },
     render:function (eventName) {
         $(this.el).html(this.template());
         return this;
@@ -129,7 +138,7 @@ var AppRouter = Backbone.Router.extend({
 
     home:function () {
         console.log('#home');
-        this.changePage(new HomeView());
+        this.changePage(new HomeView({m: this}));
     },
     bbresults:function() {
         console.log('#bbresults');
@@ -172,6 +181,7 @@ $(document).ready(function () {
 });
 
 function search(str){
+    console.log(str);
     var apikey = "d9cbk342np3k8jj9ntmybz5f";
     var url = "http://api.remix.bestbuy.com/v1/products(search=" + escape(str) + ")?apiKey=" + apikey + "&show=name,sku,regularPrice,image,longDescriptionHTML&sort=regularPrice.asc&format=json";
     $.ajax({
@@ -180,12 +190,12 @@ function search(str){
     cache: true,
     crossDomain:true,
     success: function(data) {
-        return console.log(data);
+        //console.log(data);
+        //return (data);
     },
     dataType: 'jsonp',
  
     });
-    return null;
 }
 
 function twitSearch(q){
