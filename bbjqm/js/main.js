@@ -16,7 +16,7 @@ window.HomeView = Backbone.View.extend({
             var s = $("#search").val();
             if(s.length > 0 && s != ""){   
                 //switch page and pass search string
-                this.options.m.changePage(new bbProductResultsView({search: s}));
+                this.options.m.changePage(new bbProductResultsView({search: s, m: this.options.m, page: "#results"}));
             }
         }
     }
@@ -27,15 +27,42 @@ var bbProductResultsView = Backbone.View.extend({
     initialize: function(){
         //listen for updates to productResults
         this.listenTo(productResults, 'add', this.addOne);
-        search(this.options.search);//search using passed in search string
+       // this.listenTo(productResults, 'reset', this.addAll);
+        //this.listenTo(productResults, 'all', this.addAll);
+        if(this.options.search !== undefined){
+            search(this.options.search);//search using passed in search string
+        }
+        else{
+            console.log("Load all");
+            productResults.each(this.addOne, this);
+        }
+        
+    },
+    events:{
+      "click table": "load"  
+    },
+    load: function(e){
+        console.log($(e.currentTarget).attr("id"));
+        var item = productResults.findWhere({ cid: $(e.currentTarget).attr("id")});
+        //console.log(productResults);
+        console.log(item);
+        this.options.m.changePage(new SingleProductView({item: item, model: item, page: item.attributes.name}))
     },
     render:function (eventName) {
         $(this.el).html(this.template());
         return this;
     },
     addOne: function(result) {
+        result.set({cid: result.cid});
+        console.log("Rendering");
+        console.log(result);
       var view = new ResultList({model: result});
+      console.log(view);
       this.$("#result-list").append(view.render().el);
+    },
+    addAll: function() {
+        console.log("loading");
+      productResults.each(this.addOne, this);
     }
 });
 var ResultList = Backbone.View.extend({
@@ -46,6 +73,7 @@ var ResultList = Backbone.View.extend({
       this.listenTo(this.model, 'destroy', this.remove);
     },
     render: function() {
+        //console.log(this.model);
       this.$el.html(this.template(this.model.toJSON()));
       return this;
     }
@@ -76,6 +104,17 @@ var ProductResults = Backbone.Collection.extend({
 //Create global collections
 var productResults = new ProductResults;
 
+var SingleProductView = Backbone.View.extend({
+    template: _.template($('#product-template').html()),
+    initialize: function() {
+    },
+    render: function() {
+        //console.log(this.model);
+        $(this.el).html(this.template(this.model.toJSON()));
+      //this.$el.html(this.template(this.model.toJSON()));
+      return this;
+    }
+});
 //////Twitter//////////////////////////////////////////////////////////////////Twitter///////////////////////////////////
 var tweet = Backbone.Model.extend({
     initialize: function() {
@@ -133,7 +172,7 @@ var AppRouter = Backbone.Router.extend({
     },
     bbresults:function() {
         console.log('#bbresults');
-        this.changePage(new bbProductResultsView());
+        this.changePage(new bbProductResultsView({m: this, page: "#results"}));
     },
     
     favs:function() {
@@ -150,7 +189,12 @@ var AppRouter = Backbone.Router.extend({
         if (this.firstPage) {
             transition = 'none';
             this.firstPage = false;
+            this.navigate("");
         }
+        else{
+            this.navigate(page.options.page);
+        }
+        
         $.mobile.changePage($(page.el), {changeHash:false, transition: transition});
     }
 

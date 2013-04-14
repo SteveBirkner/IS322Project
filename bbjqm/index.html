@@ -4,9 +4,7 @@
     <title></title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="css/jquery.mobile-1.0.1.min.css"/>
-    <style type="text/css">
-        span { clear:both;}
-    </style>
+    
 
     <!-- The Templates -->
     <script type="text/template" id="home">
@@ -46,9 +44,20 @@
 
    
     </script>
-    <script type="text/template" id="result-template">
-        <div id="block">
-        <img src="" /> <h3></h3><p></p>
+    <script type="text/template" id="singleitem-template">
+        <div data-role="header">
+            <a href="#" data-icon="back" class="back ui-btn-left">Back</a>
+            <h1><%- name %></h1>
+        </div>
+
+        <div data-role="content">
+            <p>$<%- regularPrice %></p>
+            <div id="result-list"></div>
+            <p>Navigate to:</p>
+            <ul data-role="listview" data-inset="true">
+                <li><a href="#">Home</a></li>
+                <li><a href="#page2">Product View</a></li>
+            </ul>
         </div>
     </script>
     <script type="text/template" id="favs">
@@ -67,14 +76,30 @@
     </script>
 
     <script type="text/template" id="item-template">
+        
         <div class="view">
-        <table><tr><td>
+        <table id="<%- cid %>"><tr><td>
          <img src="<%- image %>" />
          </td><td>
           <label><%- name %></label>
           <p>$<%- regularPrice %></p>
           </tr></td></table>
         </div>
+    </script>
+    <script type="text/template" id="product-template">
+        <div data-role="header" data-inset="true">
+            <a href="#" data-icon="back" class="back ui-btn-left">Back</a>
+            <h1><%- name %></h1>
+        </div>
+        <div class="view">
+        <table id="<%- cid %>"><tr><td>
+         <img src="<%- image %>" />
+         </td><td>
+          <label><%- name %></label>
+          <p>$<%- regularPrice %></p>
+          </tr></td></table>
+        </div>
+        
     </script>
     <!-- The Scripts -->
     <script src="lib/jquery-1.7.1.min.js"></script>
