@@ -14,54 +14,69 @@ window.HomeView = Backbone.View.extend({
         if(e.which == 13) {
             //if enter key and search isn't empty, do search
             var s = $("#search").val();
-            if(s.length > 0 && s != ""){
-                //search(s);
-                //trying to send result set to result page to display the output
-                //this way doesn't work
-                //this.changePage(new bbResultsView({results: search(s)}));
-                //localStorage.set("search", s);
-                console.log("Search: " + s);
-                this.options.m.changePage(new bbResultsView({results: s}));
-                
+            if(s.length > 0 && s != ""){   
+                //switch page and pass search string
+                this.options.m.changePage(new bbProductResultsView({search: s}));
             }
         }
     }
 });
 
-window.bbResultsView = Backbone.View.extend({
+var bbProductResultsView = Backbone.View.extend({
     template:_.template($('#bbresults').html()),
     initialize: function(){
-       // this.model.bind("change", this.render,this);
-       console.log("Rec. Search: " + this.options.results);
-       search(this.options.results);
+        //listen for updates to productResults
+        this.listenTo(productResults, 'add', this.addOne);
+        search(this.options.search);//search using passed in search string
     },
     render:function (eventName) {
         $(this.el).html(this.template());
         return this;
+    },
+    addOne: function(result) {
+      var view = new ResultList({model: result});
+      this.$("#result-list").append(view.render().el);
     }
 });
-
-//Result Model
-var result = Backbone.Model.extend({
+var ResultList = Backbone.View.extend({
+    tagName:  "p",
+    template: _.template($('#item-template').html()),
+    initialize: function() {
+      this.listenTo(this.model, 'change', this.render);
+      this.listenTo(this.model, 'destroy', this.remove);
+    },
+    render: function() {
+      this.$el.html(this.template(this.model.toJSON()));
+      return this;
+    }
+});
+//ProductResult Model
+var ProductResult = Backbone.Model.extend({
    initialize: function() {
-        console.log("Result active");
-   },
-   
-   // will need to pass the function the object and set aspects or object to them
-   attributes: function() {
-        this.set({name: "x"}); //will have to change later so we can add the object into it
-        
-   }
+        console.log("New Product result model created");
+    },
+    defaults: function() {
+      return {
+        name: "undefined",
+        regularPrice: 0.00,
+        sku: 0,
+        image: "undefined"
+      };
+    }
    
 });
 
-var res = new result();
-
-//Results Collection
-var resultsList = Backbone.Collection.extend({
-   model: result 
+//ProductResults Collection
+var ProductResults = Backbone.Collection.extend({
+    initialize: function(){
+        console.log("Created collection");
+    },
+   model: ProductResult 
 });
+//Create global collections
+var productResults = new ProductResults;
 
+//////Twitter//////////////////////////////////////////////////////////////////Twitter///////////////////////////////////
 var tweet = Backbone.Model.extend({
     initialize: function() {
     
@@ -93,28 +108,6 @@ window.favsView = Backbone.View.extend({
 
 });
 
-
-
-window.Page1View = Backbone.View.extend({
-
-    template:_.template($('#page1').html()),
-
-    render:function (eventName) {
-        $(this.el).html(this.template());
-        return this;
-    }
-});
-
-window.Page2View = Backbone.View.extend({
-
-    template:_.template($('#page2').html()),
-
-    render:function (eventName) {
-        $(this.el).html(this.template());
-        return this;
-    }
-});
-
 var AppRouter = Backbone.Router.extend({
 
     routes:{
@@ -140,21 +133,12 @@ var AppRouter = Backbone.Router.extend({
     },
     bbresults:function() {
         console.log('#bbresults');
-        this.changePage(new bbResultsView());
+        this.changePage(new bbProductResultsView());
     },
     
     favs:function() {
         console.log('#favs');
         this.changePage(new favsView());
-    },
-    page1:function () {
-        console.log('#page1');
-        this.changePage(new Page1View());
-    },
-
-    page2:function () {
-        console.log('#page2');
-        this.changePage(new Page2View());
     },
 
     changePage:function (page) {
@@ -179,7 +163,7 @@ $(document).ready(function () {
 });
 
 function search(str){
-    console.log(str);
+    console.log("Running query");
     var apikey = "d9cbk342np3k8jj9ntmybz5f";
     var url = "http://api.remix.bestbuy.com/v1/products(search=" + escape(str) + ")?apiKey=" + apikey + "&show=name,sku,regularPrice,image,longDescriptionHTML&sort=regularPrice.asc&format=json";
     $.ajax({
@@ -188,7 +172,12 @@ function search(str){
     cache: true,
     crossDomain:true,
     success: function(data) {
-        console.log(data);
+        //loop
+        //var p1 = new Product({name: "name", image: "image", id:"id", price:"price"});
+        for(var i = 0; i < data.products.length; i++){
+            //var pr = new ProductResult(data.products[i]);
+            productResults.add(data.products[i]);
+        }
     },
     dataType: 'jsonp',
  

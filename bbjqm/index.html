@@ -4,6 +4,9 @@
     <title></title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="css/jquery.mobile-1.0.1.min.css"/>
+    <style type="text/css">
+        span { clear:both;}
+    </style>
 
     <!-- The Templates -->
     <script type="text/template" id="home">
@@ -33,6 +36,7 @@
 
         <div data-role="content">
             <p>Results</p>
+            <div id="result-list"></div>
             <p>Navigate to:</p>
             <ul data-role="listview" data-inset="true">
                 <li><a href="#">Home</a></li>
@@ -41,6 +45,11 @@
         </div>
 
    
+    </script>
+    <script type="text/template" id="result-template">
+        <div id="block">
+        <img src="" /> <h3></h3><p></p>
+        </div>
     </script>
     <script type="text/template" id="favs">
 
@@ -56,44 +65,17 @@
         </div>
 
     </script>
-   
-   
-    <script type="text/template" id="page1">
 
-        <div data-role="header">
-            <a href="#" data-icon="back" class="back ui-btn-left">Back</a>
-            <h1>Results</h1>
+    <script type="text/template" id="item-template">
+        <div class="view">
+        <table><tr><td>
+         <img src="<%- image %>" />
+         </td><td>
+          <label><%- name %></label>
+          <p>$<%- regularPrice %></p>
+          </tr></td></table>
         </div>
-
-        <div data-role="content">
-            <p>This is Page 1. It was created dynamically using an underscore.js template.</p>
-            <p>Navigate to:</p>
-            <ul data-role="listview" data-inset="true">
-                <li><a href="#">Home</a></li>
-                <li><a href="#page2">Product View</a></li>
-            </ul>
-        </div>
-
     </script>
-
-    <script type="text/template" id="page2">
-
-        <div data-role="header">
-            <a href="#" data-icon="back" class="back ui-btn-left">Back</a>
-            <h1>Product View</h1>
-        </div>
-
-        <div data-role="content">
-            <p>This is Page 2. It was created dynamically using an underscore.js template.</p>
-            <p>Navigate to:</p>
-            <ul data-role="listview" data-inset="true">
-                <li><a href="#">Home</a></li>
-                <li><a href="#page1">Results</a></li>
-            </ul>
-        </div>
-
-    </script>
-
     <!-- The Scripts -->
     <script src="lib/jquery-1.7.1.min.js"></script>
     <script src="js/jqm-config.js"></script>
