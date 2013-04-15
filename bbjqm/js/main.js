@@ -1,3 +1,4 @@
+var s = ""; //global search query -- delete once you get loading the collection working...
 window.HomeView = Backbone.View.extend({
 
     template:_.template($('#home').html()),
@@ -13,7 +14,7 @@ window.HomeView = Backbone.View.extend({
     onEnter: function(e){
         if(e.which == 13) {
             //if enter key and search isn't empty, do search
-            var s = $("#search").val();
+            s = $("#search").val();
             if(s.length > 0 && s != ""){   
                 //switch page and pass search string
                 this.options.m.changePage(new bbProductResultsView({search: s, m: this.options.m, page: "#results"}));
@@ -25,63 +26,81 @@ window.HomeView = Backbone.View.extend({
 var bbProductResultsView = Backbone.View.extend({
     template:_.template($('#bbresults').html()),
     initialize: function(){
+        console.log("Initializing new bbProductResultsView");
         //listen for updates to productResults
         this.listenTo(productResults, 'add', this.addOne);
-       // this.listenTo(productResults, 'reset', this.addAll);
+        this.listenTo(productResults, 'reset', this.addAll);
         //this.listenTo(productResults, 'all', this.addAll);
         if(this.options.search !== undefined){
             search(this.options.search);//search using passed in search string
+            //works even on being called by "back" by being directed to /#results route
+            //if search string is passed
         }
         else{
-            console.log("Load all");
-            productResults.each(this.addOne, this);
+            //called when "back" button pressed or route /#results is activated
+            //doesn't rerender the list.
+            //supposed to use last collection and render
+            //seems to work if addOne is called, addAll doesn't seem to trigger this unless it never
+            //got called
+            //this.addAll();
+            //temporarily requery...
+            search(s);
+            
         }
+        console.log(this.$("#result-list").html());
         
     },
     events:{
       "click table": "load"  
     },
     load: function(e){
-        console.log($(e.currentTarget).attr("id"));
         var item = productResults.findWhere({ cid: $(e.currentTarget).attr("id")});
-        //console.log(productResults);
-        console.log(item);
-        this.options.m.changePage(new SingleProductView({item: item, model: item, page: item.attributes.name}))
+        //changing pages loses element references (ie. $("#result-list") becomes undefined)
+        //however calling search() again works???
+        this.options.m.changePage(new SingleProductView({item: item, model: item, page: item.attributes.name}));
+        this.unbind();
+        this.remove();
+        
     },
     render:function (eventName) {
-        $(this.el).html(this.template());
-        return this;
+        this.$el.html(this.template());
+        return this.el;
     },
     addOne: function(result) {
         result.set({cid: result.cid});
-        console.log("Rendering");
-        console.log(result);
       var view = new ResultList({model: result});
       console.log(view);
-      this.$("#result-list").append(view.render().el);
+      console.log(this.$("#result-list"));
+      this.$("#result-list").append(view.render().$el);
+      view.remove();
     },
     addAll: function() {
         console.log("loading");
-      productResults.each(this.addOne, this);
+        productResults.each(this.addOne, this);
+    },
+    remove: function(){
+        console.log("Removed");
     }
 });
 var ResultList = Backbone.View.extend({
     tagName:  "p",
     template: _.template($('#item-template').html()),
     initialize: function() {
-      this.listenTo(this.model, 'change', this.render);
-      this.listenTo(this.model, 'destroy', this.remove);
     },
     render: function() {
         //console.log(this.model);
       this.$el.html(this.template(this.model.toJSON()));
       return this;
+    },
+    remove: function(){
+        this.unbind();
+        console.log("removed result list");
     }
 });
 //ProductResult Model
 var ProductResult = Backbone.Model.extend({
    initialize: function() {
-        console.log("New Product result model created");
+       // console.log("New Product result model created");
     },
     defaults: function() {
       return {
@@ -99,11 +118,11 @@ var ProductResults = Backbone.Collection.extend({
     initialize: function(){
         console.log("Created collection");
     },
-   model: ProductResult 
+   model: ProductResult,
+   localStorage: new Backbone.LocalStorage("productResults")
 });
 //Create global collections
 var productResults = new ProductResults;
-
 var SingleProductView = Backbone.View.extend({
     template: _.template($('#product-template').html()),
     initialize: function() {
@@ -172,7 +191,7 @@ var AppRouter = Backbone.Router.extend({
     },
     bbresults:function() {
         console.log('#bbresults');
-        this.changePage(new bbProductResultsView({m: this, page: "#results"}));
+        this.changePage(new bbProductResultsView({ m: this, page: "#results"}));
     },
     
     favs:function() {
