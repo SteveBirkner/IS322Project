@@ -127,11 +127,18 @@ var SingleProductView = Backbone.View.extend({
     template: _.template($('#product-template').html()),
     initialize: function() {
     },
+    events: {//remove this on route change
+        "routes" : "remove"
+    },
     render: function() {
         //console.log(this.model);
         $(this.el).html(this.template(this.model.toJSON()));
       //this.$el.html(this.template(this.model.toJSON()));
       return this;
+    },
+    remove: function(){
+        this.unbind();
+        this.remove();
     }
 });
 //////Twitter//////////////////////////////////////////////////////////////////Twitter///////////////////////////////////
