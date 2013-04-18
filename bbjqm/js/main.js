@@ -18,23 +18,21 @@ window.HomeView = Backbone.View.extend({
             if(s.length > 0 && s != ""){   
                 //switch page and pass search string
                 this.options.m.changePage(new bbProductResultsView({search: s, m: this.options.m, page: "#results"}));
+                
             }
         }
     }
 });
-
 var bbProductResultsView = Backbone.View.extend({
     template:_.template($('#bbresults').html()),
     initialize: function(){
         console.log("Initializing new bbProductResultsView");
         //listen for updates to productResults
         this.listenTo(productResults, 'add', this.addOne);
-        this.listenTo(productResults, 'reset', this.addAll);
-        //this.listenTo(productResults, 'all', this.addAll);
+        //this.listenTo(productResults, 'reset', this.addAll);
+        
         if(this.options.search !== undefined){
             search(this.options.search);//search using passed in search string
-            //works even on being called by "back" by being directed to /#results route
-            //if search string is passed
         }
         else{
             //called when "back" button pressed or route /#results is activated
@@ -42,13 +40,29 @@ var bbProductResultsView = Backbone.View.extend({
             //supposed to use last collection and render
             //seems to work if addOne is called, addAll doesn't seem to trigger this unless it never
             //got called
-            //this.addAll();
             //temporarily requery...
-            search(s);
+            //search(s);
+            //this.addAll();
+            /*var products = new ProductResults();
+            console.log(products);
+            products.fetch({success: function(){
+                this.addOne(products[i].model);
+            }})*/
+            /*this.listenTo(productResults, 'all', this.addAll);
+            console.log("fetching");
+            productResults.fetch({success: function(){
+                console.log("fetched");
+            }});*/
+            /*var products = productResults.models;
+            productResults.reset();
+            for(var i = 0; i < products.length; i++){
+                console.log("test");
+                console.log(products[i].toJSON());
+                productResults.add(products[i].toJSON());
+                
+            }*/
             
         }
-        console.log(this.$("#result-list").html());
-        
     },
     events:{
       "click table": "load"  
@@ -64,15 +78,26 @@ var bbProductResultsView = Backbone.View.extend({
     },
     render:function (eventName) {
         this.$el.html(this.template());
-        return this.el;
+        return this;
     },
     addOne: function(result) {
-        result.set({cid: result.cid});
-      var view = new ResultList({model: result});
-      console.log(view);
+        console.log(result.get("cid"));
+        if(result.get("cid") === undefined){
+            result.set({cid: result.cid});
+        }
+        console.log(this.$("#result-list"));//loses div reference on reload?
+        /*if(this.$("#result-list").html() === null){
+            this.$el.append('<div id="result-list"></div>');
+            $("#result-list").show();
+        }*/
+        this.$("#result-list").append(new ResultList({model: result}).render().el);
+        //console.log(result.get("cid"));
+      /*var view = new ResultList({model: result});
+      //console.log(view);
       console.log(this.$("#result-list"));
       this.$("#result-list").append(view.render().$el);
-      view.remove();
+      view.remove();*/
+      
     },
     addAll: function() {
         console.log("loading");
@@ -82,24 +107,28 @@ var bbProductResultsView = Backbone.View.extend({
         console.log("Removed");
     }
 });
+
 var ResultList = Backbone.View.extend({
     tagName:  "p",
     template: _.template($('#item-template').html()),
     initialize: function() {
+        this.model.bind("change", this.render, this);
+        this.model.bind("destroy", this.close, this);
     },
     render: function() {
-        //console.log(this.model);
       this.$el.html(this.template(this.model.toJSON()));
       return this;
     },
-    remove: function(){
+    close: function(){
         this.unbind();
+        this.remove();
         console.log("removed result list");
     }
 });
 //ProductResult Model
 var ProductResult = Backbone.Model.extend({
-   initialize: function() {
+    urlRoot: "/products",
+    initialize: function() {
        // console.log("New Product result model created");
     },
     defaults: function() {
@@ -119,6 +148,7 @@ var ProductResults = Backbone.Collection.extend({
         console.log("Created collection");
     },
    model: ProductResult,
+   url: "/products",
    localStorage: new Backbone.LocalStorage("productResults")
 });
 //Create global collections
@@ -235,7 +265,7 @@ $(document).ready(function () {
 function search(str){
     console.log("Running query");
     var apikey = "d9cbk342np3k8jj9ntmybz5f";
-    var url = "http://api.remix.bestbuy.com/v1/products(search=" + escape(str) + ")?apiKey=" + apikey + "&show=name,sku,regularPrice,image,longDescriptionHTML&sort=regularPrice.asc&format=json";
+    var url = "http://api.remix.bestbuy.com/v1/products(search=" + escape(str) + ")?apiKey=" + apikey + "&show=name,sku,regularPrice,image,longDescriptionHTML&sort=name.asc,&format=json";
     $.ajax({
     type: "GET",
     url: url,
