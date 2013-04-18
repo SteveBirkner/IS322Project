@@ -110,11 +110,12 @@ window.SingleProductView = Backbone.View.extend({
     },
     events: {//remove this on route change
         "routes" : "close",
-        "click #addto" : "addFav"
+        "click #addto" : "addFav",
+        "click #tweetbut" : "tweets"
     },
     render: function() {
         console.log(this.model);
-        console.log(this.model.get("name"));
+        //console.log(this.model.get("name"));
         $(this.el).html(this.template(this.model.toJSON()));
       //this.$el.html(this.template(this.model.toJSON()));
       return this;
@@ -125,8 +126,11 @@ window.SingleProductView = Backbone.View.extend({
     },
     addFav: function(){
         
-        console.log($("#pname").childNode);
+        console.log(this.model.get("name"));
         
+    },
+    tweets: function() {
+        console.log("works");
     }
 });
 //////Twitter//////////////////////////////////////////////////////////////////Twitter///////////////////////////////////
@@ -141,6 +145,17 @@ window.Tweet = Backbone.Model.extend({
     },
 
 });
+
+var TweetView = Backbone.View.extend({
+    initialize: function () {
+        console.log("Works");
+    },
+    
+    
+
+});
+
+
 
 window.TweetColl = Backbone.Collection.extend({
     model: Tweet    
