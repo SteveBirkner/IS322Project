@@ -153,12 +153,15 @@ var ProductResults = Backbone.Collection.extend({
 });
 //Create global collections
 var productResults = new ProductResults;
+
+
 var SingleProductView = Backbone.View.extend({
     template: _.template($('#product-template').html()),
     initialize: function() {
     },
     events: {//remove this on route change
-        "routes" : "remove"
+        "routes" : "remove",
+        "click #addto" : "addFav"
     },
     render: function() {
         //console.log(this.model);
@@ -169,26 +172,33 @@ var SingleProductView = Backbone.View.extend({
     remove: function(){
         this.unbind();
         this.remove();
+    },
+    addFav: function(){
+        
+        console.log($("#pname").childNode);
+        
     }
 });
 //////Twitter//////////////////////////////////////////////////////////////////Twitter///////////////////////////////////
-var tweet = Backbone.Model.extend({
+window.Tweet = Backbone.Model.extend({
     initialize: function() {
     
         console.log("TweetTweet");
     },
-    //this will get the twitter id and the tweet text
-     attributes: function() {
-        this.set({name: "x"}); //will have to change later so we can add the object into it
-        
-   }
+    defaults: {
+        "text": "",
+        "author": "",
+    },
 
 });
 
-var tweetsList = Backbone.Collection.extend({
-    model: tweet    
+window.TweetColl = Backbone.Collection.extend({
+    model: Tweet    
     
 });
+
+
+
 
 
 //favorites view
@@ -303,6 +313,7 @@ function twitSearch(q){
     });
     
 }
+
 
 
 
