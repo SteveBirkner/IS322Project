@@ -9,7 +9,8 @@ window.HomeView = Backbone.View.extend({
     },
     events: {
         //enter key triggers onEnter event
-        "keypress":"onEnter"
+        "keypress":"onEnter",
+        "click #fav" : "gotoFav"
     },
     onEnter: function(e){
         if(e.which == 13) {
@@ -20,6 +21,13 @@ window.HomeView = Backbone.View.extend({
                 app.navigate("#products/" + s, {trigger: true, replace: true});
             }
         }
+    },
+    
+    gotoFav: function(e){
+        //goes to favorties view
+        app.navigate("#favs/",{trigger: true, replace: true});
+        
+        
     }
 });
 window.ProductListView = Backbone.View.extend({
@@ -160,6 +168,8 @@ window.TweetColl = Backbone.Collection.extend({
 
 
 //favorites view
+
+
 window.favsView = Backbone.View.extend({
     
     template:_.template($('#favs').html()),
