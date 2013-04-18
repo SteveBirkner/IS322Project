@@ -17,55 +17,94 @@ window.HomeView = Backbone.View.extend({
             s = $("#search").val();
             if(s.length > 0 && s != ""){   
                 //switch page and pass search string
-                app.navigate("#products/" + s, {trigger: true, replace: true});
+                this.options.m.changePage(new bbProductResultsView({search: s, m: this.options.m, page: "#results"}));
+                
             }
         }
     }
 });
-window.ProductListView = Backbone.View.extend({
-  tagName:'ul',
-    template: _.template($('#bbresults').html()),
-    initialize:function () {
-        this.model.bind("reset", this.render, this);
-        var self = this;
-        this.model.bind("add", function (product) {
-            product.set({id: product.get("sku")});
-            $(self.el).append(new ProductListItemView({model:product}).render().el);
-        });
+var bbProductResultsView = Backbone.View.extend({
+    template:_.template($('#bbresults').html()),
+    initialize: function(){
+        console.log("Initializing new bbProductResultsView");
+        //listen for updates to productResults
+        this.listenTo(productResults, 'add', this.addOne);
+        //this.listenTo(productResults, 'reset', this.addAll);
+        
+        if(this.options.search !== undefined){
+            search(this.options.search);//search using passed in search string
+        }
+        else{
+            //called when "back" button pressed or route /#results is activated
+            //doesn't rerender the list.
+            //supposed to use last collection and render
+            //seems to work if addOne is called, addAll doesn't seem to trigger this unless it never
+            //got called
+            //temporarily requery...
+            //search(s);
+            //this.addAll();
+            /*var products = new ProductResults();
+            console.log(products);
+            products.fetch({success: function(){
+                this.addOne(products[i].model);
+            }})*/
+            /*this.listenTo(productResults, 'all', this.addAll);
+            console.log("fetching");
+            productResults.fetch({success: function(){
+                console.log("fetched");
+            }});*/
+            /*var products = productResults.models;
+            productResults.reset();
+            for(var i = 0; i < products.length; i++){
+                console.log("test");
+                console.log(products[i].toJSON());
+                productResults.add(products[i].toJSON());
+                
+            }*/
+            
+        }
     },
     events:{
       "click table": "load"  
     },
     load: function(e){
-         app.navigate("#product/" +$(e.currentTarget).attr("id"), {trigger:true, replace:true});
+        var item = productResults.findWhere({ cid: $(e.currentTarget).attr("id")});
+        //changing pages loses element references (ie. $("#result-list") becomes undefined)
+        //however calling search() again works???
+        this.options.m.changePage(new SingleProductView({item: item, model: item, page: item.attributes.name}));
+        this.unbind();
+        this.remove();
+        
     },
     render:function (eventName) {
-        //_.each(this.model.models, function (product) {
-        //    $(this.el).append(new ProductListItemView({model:product}).render().el);
-        //}, this);
         this.$el.html(this.template());
         return this;
-    }  
-});
-window.ProductListItemView = Backbone.View.extend({
-
-    tagName:"li",
-
-    template:_.template($('#item-template').html()),
-
-    initialize:function () {
-        this.model.bind("change", this.render, this);
-        this.model.bind("destroy", this.close, this);
     },
-
-    render:function (eventName) {
-        $(this.el).html(this.template(this.model.toJSON()));
-        return this;
+    addOne: function(result) {
+        console.log(result.get("cid"));
+        if(result.get("cid") === undefined){
+            result.set({cid: result.cid});
+        }
+        console.log(this.$("#result-list"));//loses div reference on reload?
+        /*if(this.$("#result-list").html() === null){
+            this.$el.append('<div id="result-list"></div>');
+            $("#result-list").show();
+        }*/
+        this.$("#result-list").append(new ResultList({model: result}).render().el);
+        //console.log(result.get("cid"));
+      /*var view = new ResultList({model: result});
+      //console.log(view);
+      console.log(this.$("#result-list"));
+      this.$("#result-list").append(view.render().$el);
+      view.remove();*/
+      
     },
-
-    close:function () {
-        $(this.el).unbind();
-        $(this.el).remove();
+    addAll: function() {
+        console.log("loading");
+        productResults.each(this.addOne, this);
+    },
+    remove: function(){
+        console.log("Removed");
     }
 });
 
@@ -90,12 +129,15 @@ var ResultList = Backbone.View.extend({
 var ProductResult = Backbone.Model.extend({
     urlRoot: "/products",
     initialize: function() {
+       // console.log("New Product result model created");
     },
-    defaults:  {
+    defaults: function() {
+      return {
         name: "undefined",
         regularPrice: 0.00,
         sku: 0,
         image: "undefined"
+      };
     }
    
 });
@@ -110,16 +152,13 @@ var ProductResults = Backbone.Collection.extend({
    localStorage: new Backbone.LocalStorage("productResults")
 });
 //Create global collections
-//var productResults = new ProductResults;
-
-
-window.SingleProductView = Backbone.View.extend({
+var productResults = new ProductResults;
+var SingleProductView = Backbone.View.extend({
     template: _.template($('#product-template').html()),
     initialize: function() {
     },
     events: {//remove this on route change
-        "routes" : "close",
-        "click #addto" : "addFav"
+        "routes" : "remove"
     },
     render: function() {
         //console.log(this.model);
@@ -127,36 +166,29 @@ window.SingleProductView = Backbone.View.extend({
       //this.$el.html(this.template(this.model.toJSON()));
       return this;
     },
-    close: function(){
+    remove: function(){
         this.unbind();
         this.remove();
-    },
-    addFav: function(){
-        
-        console.log($("#pname").childNode);
-        
     }
 });
 //////Twitter//////////////////////////////////////////////////////////////////Twitter///////////////////////////////////
-window.Tweet = Backbone.Model.extend({
+var tweet = Backbone.Model.extend({
     initialize: function() {
     
         console.log("TweetTweet");
     },
-    defaults: {
-        "text": "",
-        "author": "",
-    },
+    //this will get the twitter id and the tweet text
+     attributes: function() {
+        this.set({name: "x"}); //will have to change later so we can add the object into it
+        
+   }
 
 });
 
-window.TweetColl = Backbone.Collection.extend({
-    model: Tweet    
+var tweetsList = Backbone.Collection.extend({
+    model: tweet    
     
 });
-
-
-
 
 
 //favorites view
@@ -175,8 +207,9 @@ var AppRouter = Backbone.Router.extend({
 
     routes:{
         "":"home",
-        "products/:s":"products",
-        "product/:id":"product",
+        "page1":"page1",
+        "page2":"page2",
+        "results":"bbresults",
         "favs" : "favs"
     },
 
@@ -193,30 +226,11 @@ var AppRouter = Backbone.Router.extend({
         console.log('#home');
         this.changePage(new HomeView({m: this}));
     },
-    products:function(s) {
-        console.log('#product list');
-        
-        this.productList = new ProductResults();
-        search(s, this.productList);
-        var self = this;
-        this.productList.fetch({
-            success: function(){
-                self.productListView = new ProductListView({model:self.productList});
-                //$("body").html(self.productListView.render().el);
-                self.changePage(self.productListView);
-            }
-        });
-        //this.changePage(new bbProductResultsView({ m: this, page: "#results"}));
+    bbresults:function() {
+        console.log('#bbresults');
+        this.changePage(new bbProductResultsView({ m: this, page: "#results"}));
     },
-    product:function(id){
-        //var item = productResults.findWhere({ sku: sku});
-        if(this.productList){
-            console.log(id);
-            console.log(this.productList);
-            console.log(this.productList.findWhere({id: id}));
-        }
-      //this.changePage(new SingleProductView({  
-    },
+    
     favs:function() {
         console.log('#favs');
         this.changePage(new favsView());
@@ -234,7 +248,7 @@ var AppRouter = Backbone.Router.extend({
             this.navigate("");
         }
         else{
-            //this.navigate(page.options.page);
+            this.navigate(page.options.page);
         }
         
         $.mobile.changePage($(page.el), {changeHash:false, transition: transition});
@@ -248,7 +262,7 @@ $(document).ready(function () {
     Backbone.history.start();
 });
 
-function search(str, collections){
+function search(str){
     console.log("Running query");
     var apikey = "d9cbk342np3k8jj9ntmybz5f";
     var url = "http://api.remix.bestbuy.com/v1/products(search=" + escape(str) + ")?apiKey=" + apikey + "&show=name,sku,regularPrice,image,longDescriptionHTML&sort=name.asc,&format=json";
@@ -261,7 +275,8 @@ function search(str, collections){
         //loop
         //var p1 = new Product({name: "name", image: "image", id:"id", price:"price"});
         for(var i = 0; i < data.products.length; i++){
-            collections.add(data.products[i]);
+            //var pr = new ProductResult(data.products[i]);
+            productResults.add(data.products[i]);
         }
     },
     dataType: 'jsonp',
@@ -288,7 +303,6 @@ function twitSearch(q){
     });
     
 }
-
 
 
 
