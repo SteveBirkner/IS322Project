@@ -18,14 +18,14 @@ window.HomeView = Backbone.View.extend({
             s = $("#search").val();
             if(s.length > 0 && s != ""){   
                 //switch page and pass search string
-                app.navigate("#products/" + s, {trigger: true, replace: true});
+                app.navigate("#products/" + s, {trigger: true, replace: false});
             }
         }
     },
     
     gotoFav: function(e){
         //goes to favorties view
-        app.navigate("#favs/",{trigger: true, replace: true});
+        app.navigate("#favs/",{trigger: true, replace: false});
         
         
     }
@@ -45,7 +45,7 @@ window.ProductListView = Backbone.View.extend({
       "click table": "load"  
     },
     load: function(e){
-         app.navigate("#product/" +$(e.currentTarget).attr("id"), {trigger:true, replace:true});
+         app.navigate("#product/" +$(e.currentTarget).attr("id"), {trigger:true, replace:false});
     },
     render:function (eventName) {
         //_.each(this.model.models, function (product) {
@@ -201,7 +201,7 @@ var AppRouter = Backbone.Router.extend({
 
     home:function () {
         console.log('#home');
-        this.changePage(new HomeView({m: this}));
+        this.changePage(new HomeView());
     },
     products:function(s) {
         console.log('#product list');
@@ -218,12 +218,14 @@ var AppRouter = Backbone.Router.extend({
         });
         //this.changePage(new bbProductResultsView({ m: this, page: "#results"}));
     },
-    product:function(id){
+    product:function(n){
         //var item = productResults.findWhere({ sku: sku});
         if(this.productList){
-            console.log(id);
+            console.log(n);
             console.log(this.productList);
-            console.log(this.productList.findWhere({id: id}));
+            console.log(this.productList.findWhere({id: parseInt(n)}));
+            var m = this.productList.findWhere({id: parseInt(n)});
+            this.changePage(new SingleProductView({model: m}));
         }
       //this.changePage(new SingleProductView({  
     },
