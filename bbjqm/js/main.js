@@ -77,23 +77,6 @@ window.ProductListItemView = Backbone.View.extend({
     }
 });
 
-var ResultList = Backbone.View.extend({
-    tagName:  "p",
-    template: _.template($('#item-template').html()),
-    initialize: function() {
-        this.model.bind("change", this.render, this);
-        this.model.bind("destroy", this.close, this);
-    },
-    render: function() {
-      this.$el.html(this.template(this.model.toJSON()));
-      return this;
-    },
-    close: function(){
-        this.unbind();
-        this.remove();
-        console.log("removed result list");
-    }
-});
 //ProductResult Model
 var ProductResult = Backbone.Model.extend({
     urlRoot: "/products",
@@ -130,7 +113,8 @@ window.SingleProductView = Backbone.View.extend({
         "click #addto" : "addFav"
     },
     render: function() {
-        //console.log(this.model);
+        console.log(this.model);
+        console.log(this.model.get("name"));
         $(this.el).html(this.template(this.model.toJSON()));
       //this.$el.html(this.template(this.model.toJSON()));
       return this;
