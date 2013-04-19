@@ -128,10 +128,13 @@ window.SingleProductView = Backbone.View.extend({
     addFav: function(){
         
         console.log(this.model.get("name"));
+        var name = this.model.get("name");
+        alert(name + " Added to Favorites");
         
     },
     tweet: function() {
         console.log("works");
+        var q = this.model.get("name");
         app.navigate('tweets/', true);
         
         return false;
@@ -164,24 +167,51 @@ window.TweetColl = Backbone.Collection.extend({
     
 });
 
-var TweetListView = Backbone.View.extend({
+window.TweetListView = Backbone.View.extend({
     tagName: 'ul',
     
     initialize: function () {
        var self=this;
        
        this.model.bind( 'reset', this.render, this);
-        t        
+       this.model.bind( 'add', function(tweet) {
+            $(self.el).append( new TweetListTweetView({model: Tweet}).render());
+        
+       });
+       
     },
     
     render: function () {
-        $(this.el).html( this.template() );
+        _.each(this.model.models, function( tweet ) {
+           $(this.el).append(new TweetListTweetView({model: Tweet}).render());
+           
+        }, this);
         
         return this.el;
     }
     
     
 
+});
+
+window.TweetListTweetView = Backbone.View.extend({
+    tagName: 'li',
+    
+    initialize: function () {
+        this.template = _.template($('#tweetListTemp').html());
+        
+        this.model.bind('change', this.render(), this);
+        this.model.bind('destory', this.close(), this);
+        
+    },
+    
+    render: function() {
+        $(this.el).html(this.template(this.model.toJSON()));
+        
+        return this.el;
+    
+    }
+    
 });
 
 
@@ -194,9 +224,8 @@ var TweetListView = Backbone.View.extend({
 
 
 
-
 //favorites view
-
+// p2 backbone vid 23 min mark
 /*
 window.favsView = Backbone.View.extend({
     
@@ -329,6 +358,9 @@ function twitSearch(q){
     
 }
 
+//notes
+
+//remove from favs
 
 
 
