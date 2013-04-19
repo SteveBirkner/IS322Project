@@ -168,7 +168,7 @@ window.TweetColl = Backbone.Collection.extend({
 
 //favorites view
 
-
+/*
 window.favsView = Backbone.View.extend({
     
     template:_.template($('#favs').html()),
@@ -179,7 +179,7 @@ window.favsView = Backbone.View.extend({
     }
 
 });
-
+*/
 var AppRouter = Backbone.Router.extend({
 
     routes:{
