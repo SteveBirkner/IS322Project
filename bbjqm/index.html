@@ -53,10 +53,14 @@
 
         <div data-role="header">
             <a href="#" data-icon="back" class="back ui-btn-left">Back</a>
-            <h1>Favorites</h1>
+            <h1>Tweets</h1>
         </div>
 
-        <div data-role="content">
+        <div class="view">
+          
+                <h5><%- author %></h5>
+                <p><%- text %></p>
+           
             
             
         
@@ -89,7 +93,7 @@
           <p>$<%- regularPrice %></p>
           </tr></td></table>
           <div><button type="button" id="addto">Add to Favorites</button></div>
-          <h1>Tweets</h1>
+          <div><button type="button" id="tweetTest">Tweet</button></div>
           <hr />
         </div>
         

@@ -11,6 +11,7 @@ window.HomeView = Backbone.View.extend({
         //enter key triggers onEnter event
         "keypress":"onEnter",
         "click #fav" : "gotoFav"
+        
     },
     onEnter: function(e){
         if(e.which == 13) {
@@ -111,7 +112,7 @@ window.SingleProductView = Backbone.View.extend({
     events: {//remove this on route change
         "routes" : "close",
         "click #addto" : "addFav",
-        "click #tweetbut" : "tweets"
+        "click #tweetTest" : "tweet"
     },
     render: function() {
         console.log(this.model);
@@ -129,38 +130,66 @@ window.SingleProductView = Backbone.View.extend({
         console.log(this.model.get("name"));
         
     },
-    tweets: function() {
+    tweet: function() {
         console.log("works");
+        app.navigate('tweets/', true);
+        
+        return false;
+        
+    
+        
     }
 });
+
 //////Twitter//////////////////////////////////////////////////////////////////Twitter///////////////////////////////////
 window.Tweet = Backbone.Model.extend({
     initialize: function() {
-    
-        console.log("TweetTweet");
+        console.log("booms");
     },
     defaults: {
-        "text": "",
-        "author": "",
-    },
-
-});
-
-var TweetView = Backbone.View.extend({
-    initialize: function () {
-        console.log("Works");
+        "text" : "",
+        "author" : ""
     },
     
-    
+    urlRoot: "tweets/"
 
 });
-
-
 
 window.TweetColl = Backbone.Collection.extend({
-    model: Tweet    
+    initialize: function () {
+       console.log("boom");
+    },
+    model: Tweet,
+    urlRoot: "tweets/"
     
 });
+
+var TweetListView = Backbone.View.extend({
+    tagName: 'ul',
+    
+    initialize: function () {
+       var self=this;
+       
+       this.model.bind( 'reset', this.render, this);
+        t        
+    },
+    
+    render: function () {
+        $(this.el).html( this.template() );
+        
+        return this.el;
+    }
+    
+    
+
+});
+
+
+
+
+
+
+
 
 
 
