@@ -135,7 +135,7 @@ window.SingleProductView = Backbone.View.extend({
     tweet: function() {
         console.log("works");
         var q = this.model.get("name");
-        app.navigate('tweets/', true);
+        app.navigate('tweets/' + q,{trigger: true, replace: false});
         
         return false;
         
@@ -163,7 +163,8 @@ window.TweetColl = Backbone.Collection.extend({
        console.log("boom");
     },
     model: Tweet,
-    urlRoot: "tweets/"
+    urlRoot: "tweets/",
+    localStorage: new Backbone.LocalStorage("tweetColl")
     
 });
 
@@ -244,7 +245,8 @@ var AppRouter = Backbone.Router.extend({
         "":"home",
         "products/:s":"products",
         "product/:id":"product",
-        "favs" : "favs"
+        "favs" : "favs",
+        "tweets/:q" : "tweets"
     },
 
     initialize:function () {
@@ -285,6 +287,23 @@ var AppRouter = Backbone.Router.extend({
             this.changePage(new SingleProductView({model: m}));
         }
       //this.changePage(new SingleProductView({  
+    },
+    tweets: function(q) {
+        console.log("tweet list");
+        this.tweetList = new TweetColl();
+        twitSearch(s,this.tweetList);
+        var self = this;
+        this.tweetList.fetch({
+            success: function() {
+                self.tweetListView = new TweetListView({model:self.tweetList});
+                self.changePage(self.tweetListView);
+            }
+        
+        });
+        
+        
+        
+        
     },
     favs:function() {
         console.log('#favs');
@@ -327,6 +346,7 @@ function search(str, collections){
     cache: true,
     crossDomain:true,
     success: function(data) {
+      
         //loop
         //var p1 = new Product({name: "name", image: "image", id:"id", price:"price"});
         for(var i = 0; i < data.products.length; i++){
@@ -338,7 +358,7 @@ function search(str, collections){
     });
 }
 
-function twitSearch(q){
+function twitSearch(q, coll){
      // number of tweets to return
     $.ajax({
        url : "http://search.twitter.com/search.json?q=" + escape(q) + "&callback=?&lang=en&rpp=25",
@@ -347,6 +367,10 @@ function twitSearch(q){
        
        success : function(data){
         console.log(data);
+        for(var i=0;i < data.results.length; i++){
+            coll.add(data.results[i]);
+        }
+        
        },
        
        error: function() {
@@ -357,6 +381,7 @@ function twitSearch(q){
     });
     
 }
+
 
 //notes
 
