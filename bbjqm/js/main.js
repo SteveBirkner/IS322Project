@@ -134,6 +134,8 @@ window.SingleProductView = Backbone.View.extend({
         
         console.log(this.model.get("name"));
         var name = this.model.get("name");
+        favsColl.add(this.model);
+        console.log(favsColl);
         alert(name + " Added to Favorites");
         
     },
@@ -323,6 +325,7 @@ window.SingleFavView = Backbone.View.extend({
 
 
 
+
 window.Favorites = Backbone.Collection.extend({
     initialize: function () {
        console.log("boom");
@@ -332,7 +335,7 @@ window.Favorites = Backbone.Collection.extend({
     localStorage: new Backbone.LocalStorage("favorites")
     
 });
-
+var favsColl = new Favorites();
 
 var AppRouter = Backbone.Router.extend({
 
@@ -356,6 +359,10 @@ var AppRouter = Backbone.Router.extend({
     home:function () {
         console.log('#home');
         this.changePage(new HomeView());
+    },
+    favs: function (pmod) {
+        
+        
     },
     products:function(s) {
         console.log('#product list');
