@@ -300,7 +300,7 @@ var AppRouter = Backbone.Router.extend({
     tweets: function(q) {
         console.log("tweet list");
         this.tweetList = new TweetColl();
-        twitSearch(q,this.tweetList);
+        twitSearch(betterSearches(q),this.tweetList);
         var self = this;
         this.tweetList.fetch({
             success: function() {
@@ -367,7 +367,13 @@ function search(str, collections){
     });
 }
 
-
+function betterSearches(str){
+    str = str.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
+    console.log("Replaced: " + str);
+    str = str.split(' ').join(' OR ');
+    console.log("Edit: " + str);
+    return str;
+}
 function twitSearch(q, coll){
      // number of tweets to return
     $.ajax({
