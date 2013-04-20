@@ -26,7 +26,7 @@ window.HomeView = Backbone.View.extend({
     
     gotoFav: function(e){
         //goes to favorties view
-        app.navigate("#favs/",{trigger: true, replace: false});
+        app.navigate("#favorites/",{trigger: true, replace: false});
         
         
     }
@@ -360,8 +360,19 @@ var AppRouter = Backbone.Router.extend({
         console.log('#home');
         this.changePage(new HomeView());
     },
-    favs: function (pmod) {
+    favs: function () {
         
+        this.favscoll = favsColl();
+        var self = this;
+        this.favscoll.fetch({
+            success: function(){
+                self.favListView = new FavListView({model: self.favscoll});
+                self.changePage(self.favsListView);
+                
+            }
+            
+        
+        });
         
     },
     products:function(s) {
