@@ -231,30 +231,116 @@ window.TweetListTweetView = Backbone.View.extend({
 
 
 
+// Favorites ////////////////////////////////////////
 
-
-
-//favorites view
-// p2 backbone vid 23 min mark
-/*
-window.favsView = Backbone.View.extend({
+window.FavListView = Backbone.View.extend({
+    tagName: 'ul',
+    template:_.template($('#favResults').html()),
+    initialize: function () {
+       var self=this;
+       
+       this.model.bind( 'reset', this.render, this);
+       this.model.bind( 'add', function(favorite) {
+        
+            $(self.el).append( new TweetListTweetView({model: favorite}).render());
+        
+       });
+       
+    },
     
-    template:_.template($('#favs').html()),
-    
-    render: function (eventName) {
-        $(this.el).html(this.template());
-        return this;
+    render: function () {
+       this.$el.html(this.template());
+        
+        return this.el;
     }
+    
+    
 
 });
-*/
+
+window.FavoriteItemsListFavView = Backbone.View.extend({
+
+    tagName:"li",
+
+    template:_.template($('#fav-template').html()),
+
+    initialize:function () {
+        this.model.bind("change", this.render, this);
+        this.model.bind("destroy", this.close, this);
+    },
+
+    render:function (eventName) {
+        $(this.el).html(this.template(this.model.toJSON()));
+        return this;
+    },
+
+    close:function () {
+        $(this.el).unbind();
+        $(this.el).remove();
+    }
+});
+
+
+window.SingleFavView = Backbone.View.extend({
+    template: _.template($('#singleFav-template').html()),
+    initialize: function() {
+    },
+    events: {//remove this on route change
+        "routes" : "close",
+        "click #remove" : "removefav",
+        "click #tweetTest" : "tweet"
+    },
+    render: function() {
+        console.log(this.model);
+        //console.log(this.model.get("name"));
+        $(this.el).html(this.template(this.model.toJSON()));
+      //this.$el.html(this.template(this.model.toJSON()));
+      return this;
+    },
+    close: function(){
+        this.unbind();
+        this.remove();
+    },
+    removefav: function(){
+        
+        console.log(this.model.get("name"));
+        var name = this.model.get("name");
+        alert(name + " Removed From Favorites");
+        
+    },
+    tweet: function() {
+        console.log("works");
+        var q = this.model.get("name");
+        app.navigate('tweets/' + q,{trigger: true});
+    
+        return false;
+        
+    
+        
+    }
+});
+
+
+
+
+window.Favorites = Backbone.Collection.extend({
+    initialize: function () {
+       console.log("boom");
+    },
+    model: ProductResult,
+    urlRoot: "/favorites",
+    localStorage: new Backbone.LocalStorage("favorites")
+    
+});
+
+
 var AppRouter = Backbone.Router.extend({
 
     routes:{
         "":"home",
         "products/:s":"products",
         "product/:id":"product",
-        "favs" : "favs",
+        "favorites" : "favs",
         "tweets/:q" : "tweets"
     },
 
