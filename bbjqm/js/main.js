@@ -370,6 +370,9 @@ function search(str, collections){
 function betterSearches(str){
     str = str.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
     console.log("Replaced: " + str);
+    //read that split/join method was faster as of jan '13
+    
+    str = str.split('  ').join(' ');
     str = str.split(' ').join(' OR ');
     console.log("Edit: " + str);
     return str;
