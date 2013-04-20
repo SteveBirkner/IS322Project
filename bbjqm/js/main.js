@@ -401,6 +401,8 @@ function twitSearch(q, coll){
     $.ajax({
         //url : "https://api.twitter.com/1.1/search/tweets.json?q=" + escape(q) + "&lang=en&count=25&filter_level=high&result_type=mixed",
         //above url is v 1.1, requires authentication if you want to try to use that to see if it's any better.
+        //consider streaming to match for "completeness"
+        //https://dev.twitter.com/docs/api/1.1/post/statuses/filter
        url : "http://search.twitter.com/search.json?q=" + escape(q) + "&lang=en&rpp=25&filter_level=high",
        type: "GET",
        cache: true,
