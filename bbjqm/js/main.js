@@ -56,6 +56,10 @@ window.ProductListView = Backbone.View.extend({
         return this;
     }  
 });
+
+
+
+
 window.ProductListItemView = Backbone.View.extend({
 
     tagName:"li",
@@ -77,6 +81,7 @@ window.ProductListItemView = Backbone.View.extend({
         $(this.el).remove();
     }
 });
+
 
 //ProductResult Model
 var ProductResult = Backbone.Model.extend({
@@ -150,8 +155,8 @@ window.Tweet = Backbone.Model.extend({
         console.log("booms");
     },
     defaults: {
-        "text" : "",
-        "author" : ""
+        text : "",
+        author : ""
     },
     
     urlRoot: "tweets/"
@@ -167,7 +172,6 @@ window.TweetColl = Backbone.Collection.extend({
     localStorage: new Backbone.LocalStorage("tweetColl")
     
 });
-
 window.TweetListView = Backbone.View.extend({
     tagName: 'ul',
     
@@ -176,6 +180,8 @@ window.TweetListView = Backbone.View.extend({
        
        this.model.bind( 'reset', this.render, this);
        this.model.bind( 'add', function(tweet) {
+            tweet.set({author: tweet.get("from_user"), text: tweet.get("text")});
+        
             $(self.el).append( new TweetListTweetView({model: Tweet}).render());
         
        });
@@ -183,10 +189,7 @@ window.TweetListView = Backbone.View.extend({
     },
     
     render: function () {
-        _.each(this.model.models, function( tweet ) {
-           $(this.el).append(new TweetListTweetView({model: Tweet}).render());
-           
-        }, this);
+       this.$el.html(this.template());
         
         return this.el;
     }
@@ -194,6 +197,7 @@ window.TweetListView = Backbone.View.extend({
     
 
 });
+
 
 window.TweetListTweetView = Backbone.View.extend({
     tagName: 'li',
@@ -211,6 +215,11 @@ window.TweetListTweetView = Backbone.View.extend({
         
         return this.el;
     
+    },
+    
+    close: function () {
+        $(this.el).unbind();
+        $(this.el).remove();
     }
     
 });
@@ -346,10 +355,10 @@ function search(str, collections){
     cache: true,
     crossDomain:true,
     success: function(data) {
-      
+        console.log(data.products);
         //loop
         //var p1 = new Product({name: "name", image: "image", id:"id", price:"price"});
-        for(var i = 0; i < data.products.length; i++){
+       for(var i = 0; i < data.products.length; i++){
             collections.add(data.products[i]);
         }
     },
@@ -357,6 +366,7 @@ function search(str, collections){
  
     });
 }
+
 
 function twitSearch(q, coll){
      // number of tweets to return
@@ -366,7 +376,7 @@ function twitSearch(q, coll){
        timeout : 15000,
        
        success : function(data){
-        console.log(data);
+        
         for(var i=0;i < data.results.length; i++){
             coll.add(data.results[i]);
         }
