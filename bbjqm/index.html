@@ -30,12 +30,17 @@
 
         <div data-role="content">
             
-            <div id="result-list"></div>
+            <ul id="result-list"></ul>
            
         </div>
-
+        
+    
+        
    
-    </script>
+  
+  </script>
+
+<!--
     <script type="text/template" id="singleitem-template">
         <div data-role="header">
             <a href="#" data-icon="back" class="back ui-btn-left">Back</a>
@@ -43,26 +48,26 @@
         </div>
 
         <div data-role="content">
-            <p>$<%- regularPrice %></p>
+           <p>$<%- regularPrice %></p> 
             <div id="result-list"></div>
           
             
         </div>
     </script>
-    
+    -->
 
     <script type="text/template" id="item-template">
         
-        <div class="view">
-        <table id="<%- sku %>"><tr><td>
-         <img src="<%- image %>" />
-         </td><td>
-          <label><%- name %></label>
-          <p>$<%- regularPrice %></p>
-          </tr></td></table>
-          <hr />
-          
-        </div>
+  
+        
+            <li id="<%- sku %>">
+                <img src="<%- image %>" />
+                <h2><%- name %></h2>
+                <p>$<%- regularPrice %></p>
+            </li>
+        
+        
+        
     </script>
     <script type="text/template" id="product-template">
         <div data-role="header" data-inset="true">
@@ -82,6 +87,8 @@
         </div>
         
     </script>
+    
+    <!-- Twitter templates --> 
     <script type="text/template" id="tweetlist-template">
         <div data-role="header" data-inset="true">
             <a href="#" data-icon="back" class="back ui-btn-left">Back</a>

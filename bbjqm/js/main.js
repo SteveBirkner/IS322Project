@@ -43,7 +43,7 @@ window.ProductListView = Backbone.View.extend({
         });
     },
     events:{
-      "click table": "load"  
+      "click li": "load"  
     },
     load: function(e){
          app.navigate("#product/" +$(e.currentTarget).attr("id"), {trigger:true, replace:false});
