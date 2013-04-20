@@ -155,11 +155,11 @@ window.Tweet = Backbone.Model.extend({
         console.log("booms");
     },
     defaults: {
-        text : "",
-        author : ""
+        author: "",
+        text:""
     },
     
-    urlRoot: "tweets/"
+    urlRoot: "/tweets"
 
 });
 
@@ -168,13 +168,13 @@ window.TweetColl = Backbone.Collection.extend({
        console.log("boom");
     },
     model: Tweet,
-    urlRoot: "tweets/",
+    urlRoot: "/tweets",
     localStorage: new Backbone.LocalStorage("tweetColl")
     
 });
 window.TweetListView = Backbone.View.extend({
     tagName: 'ul',
-    
+    template:_.template($('#tweetlist-template').html()),
     initialize: function () {
        var self=this;
        
@@ -182,7 +182,7 @@ window.TweetListView = Backbone.View.extend({
        this.model.bind( 'add', function(tweet) {
             tweet.set({author: tweet.get("from_user"), text: tweet.get("text")});
         
-            $(self.el).append( new TweetListTweetView({model: Tweet}).render());
+            $(self.el).append( new TweetListTweetView({model: tweet}).render());
         
        });
        
@@ -300,7 +300,7 @@ var AppRouter = Backbone.Router.extend({
     tweets: function(q) {
         console.log("tweet list");
         this.tweetList = new TweetColl();
-        twitSearch(s,this.tweetList);
+        twitSearch(q,this.tweetList);
         var self = this;
         this.tweetList.fetch({
             success: function() {
@@ -371,8 +371,11 @@ function search(str, collections){
 function twitSearch(q, coll){
      // number of tweets to return
     $.ajax({
-       url : "http://search.twitter.com/search.json?q=" + escape(q) + "&callback=?&lang=en&rpp=25",
-       dataType : "json" ,
+       url : "http://search.twitter.com/search.json?q=" + escape(q) + "&lang=en&rpp=25",
+       type: "GET",
+       cache: true,
+    crossDomain:true,
+       dataType : "jsonp" ,
        timeout : 15000,
        
        success : function(data){
