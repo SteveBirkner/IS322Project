@@ -428,9 +428,7 @@ function twitSearch(q, coll){
 }
 
 
-//notes
 
-//remove from favs
 
 
 
