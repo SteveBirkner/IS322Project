@@ -348,7 +348,7 @@ $(document).ready(function () {
 function search(str, collections){
     console.log("Running query");
     var apikey = "d9cbk342np3k8jj9ntmybz5f";
-    var url = "http://api.remix.bestbuy.com/v1/products(search=" + escape(str) + ")?apiKey=" + apikey + "&show=name,sku,regularPrice,image,longDescriptionHTML&sort=name.asc,&format=json";
+    var url = "http://api.remix.bestbuy.com/v1/products(name=" + escape(str + "*") + "&(bias(name, -30)|bias(regularPrice,50)))?apiKey=" + apikey + "&show=name,sku,regularPrice,image,longDescriptionHTML,&format=json";
     $.ajax({
     type: "GET",
     url: url,
@@ -368,11 +368,30 @@ function search(str, collections){
 }
 
 function betterSearches(str){
-    str = str.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
+    //attempt to provide twitter with an easier search query
+    //twitter doesn't sort by number of matches in query string
+    //it seems to just match at least one word
+    //https://dev.twitter.com/docs/using-search
+    //https://dev.twitter.com/docs/api/1/get/search
+    //not sure if it'd be better to just use the original search text instead :/
+    //remove odd url hashtags in product name
+    str = str.replace(/&([^;]+);/g, '');
+    console.log(str);
+    
+    //remove special
+    str = str.replace(/[`~!@#$%^&*()_|+\-=?;:',<>."\{\}\[\]\\\/]/gi, '').toLowerCase().trim();
+    str = str.replace(/\d+/g, '');
     console.log("Replaced: " + str);
+    //filter common
+    var common = ['just', 'with', 'or', 'the', 'it', 'is', 'a', 'an', 'by', 'to', 'you', 'me', 'he', 'she', 'they', 'we', 'how', 'i', 'are', 'to', 'for', 'of', 'gb','mb','tb'];
+    for(var i = 0; i < common.length; i++){
+        str = str.split(' ' + common[i] + ' ').join(' ');
+    }
+    console.log("No common: " + str);
+    str = str.replace( /  +/g, ' ' );
     //read that split/join method was faster as of jan '13
     
-    str = str.split('  ').join(' ');
+    
     str = str.split(' ').join(' OR ');
     console.log("Edit: " + str);
     return str;
@@ -380,7 +399,7 @@ function betterSearches(str){
 function twitSearch(q, coll){
      // number of tweets to return
     $.ajax({
-       url : "http://search.twitter.com/search.json?q=" + escape(q) + "&lang=en&rpp=25",
+       url : "http://search.twitter.com/search.json?q=" + escape(q) + "&lang=en&rpp=25&filter_level=high",
        type: "GET",
        cache: true,
     crossDomain:true,
