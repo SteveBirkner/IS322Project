@@ -44,7 +44,7 @@ window.ProductListView = Backbone.View.extend({
         });
     },
     events:{
-      "mouseup li": "load"  
+      "click li": "load"  
     },
     load: function(e){
         //this is triggering twice, quick fix below but should be looked into
