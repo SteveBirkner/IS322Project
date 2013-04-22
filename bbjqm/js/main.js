@@ -26,7 +26,8 @@ window.HomeView = Backbone.View.extend({
     
     gotoFav: function(e){
         //goes to favorties view
-        app.navigate("#favorites/",{trigger: true, replace: false});
+        console.log("in gotoFav");
+        app.navigate("#favorites/",{trigger: true});
         
         
     }
@@ -137,7 +138,6 @@ window.SingleProductView = Backbone.View.extend({
     },
     addFav: function(){
         
-        console.log(this.model.get("name"));
         var name = this.model.get("name");
         favsColl.add(this.model);
         console.log(favsColl);
@@ -292,16 +292,16 @@ window.SingleFavView = Backbone.View.extend({
     template: _.template($('#singleFav-template').html()),
     initialize: function() {
     },
-    events: {//remove this on route change
+    events: {
         "routes" : "close",
         "click #remove" : "removefav",
         "click #tweetTest" : "tweet"
     },
     render: function() {
         console.log(this.model);
-        //console.log(this.model.get("name"));
+      
         $(this.el).html(this.template(this.model.toJSON()));
-      //this.$el.html(this.template(this.model.toJSON()));
+     
       return this;
     },
     close: function(){
@@ -348,7 +348,7 @@ var AppRouter = Backbone.Router.extend({
         "":"home",
         "products/:s":"products",
         "product/:id":"product",
-        "favorites" : "favs",
+        "favorites/" : "favs",
         "tweets/:q" : "tweets"
     },
 
@@ -367,12 +367,14 @@ var AppRouter = Backbone.Router.extend({
     },
     favs: function () {
         
-        this.favscoll = favsColl();
+        this.favscoll = favsColl;
         var self = this;
+        console.log("here");
+        console.log(this.favscoll);
         this.favscoll.fetch({
             success: function(){
                 self.favListView = new FavListView({model: self.favscoll});
-                self.changePage(self.favsListView);
+                self.changePage(self.favListView);
                 
             }
             
@@ -424,10 +426,7 @@ var AppRouter = Backbone.Router.extend({
         
         
     },
-    favs:function() {
-        console.log('#favs');
-        this.changePage(new favsView());
-    },
+   
 
     changePage:function (page) {
         $(page.el).attr('data-role', 'page');
@@ -506,6 +505,12 @@ function betterSearches(str){
     console.log("Edit: " + str);
     return str;
 }
+function toauth() {
+    
+    //nothing to see yet
+    
+}
+
 function twitSearch(q, coll){
      // number of tweets to return
     $.ajax({
