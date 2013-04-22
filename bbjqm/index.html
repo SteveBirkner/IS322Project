@@ -28,9 +28,9 @@
             <h1>Results</h1>
         </div>
 
-        <div data-role="content">
+        <div data-role="listview">
             
-            <ul id="result-list"></ul>
+            <ul data-role="listview" id="result-list"></ul>
            
         </div>
         
@@ -40,19 +40,17 @@
   
   </script>
 
-<!--  http://view.jquerymobile.com/1.3.1/dist/demos/widgets/listviews/#&ui-state=dialog   li image -->
-
-
     <script type="text/template" id="item-template">
-        
-  
-        
-            <li id="<%- sku %>">
-                <img src="<%- image %>" />
-                <h2><%- name %></h2>
-                <p>$<%- regularPrice %></p>
+        <div class="ui-listview" data-role="listview">
+           <li id="<%- sku %>" class="ui-body-has-thumb ui-body-a">
+           <table><tr><td>
+                <img src="<%- image %>" class="ui-body-thumb">
+                </td><td>
+                <p data-role="fieldcontain" class="ui-body-desc"><%- name %></p>
+                <p class="ui-li-desc">$<%- regularPrice %></p>
+                </td></tr></table>
             </li>
-        
+        </div>
         
         
     </script>
@@ -61,13 +59,15 @@
             <a href="#" data-icon="back" class="back ui-btn-left">Back</a>
             <h1 id="phead"><%- name %></h1>
         </div>
-        <div class="view">
-        <table id="<%- sku %>"><tr><td>
+        <div data-role="content">
+        <table data-role="content" class="ui-btn ui-li-has-thumb ui-btn-up-a" id="<%- sku %>"><tr><td>
          <img src="<%- image %>" />
          </td><td>
-          <label id="pname"><%- name %></label>
-          <p>$<%- regularPrice %></p>
+          <label id="pname" class="ui-li-desc"><%- name %></label>
+          <p class="ui-li-desc">$<%- regularPrice %></p>
           </tr></td></table>
+          
+          
           <div><button type="button" id="addto">Add to Favorites</button></div>
           <div><button type="button" id="tweetTest">Tweets About</button></div>
           <hr />
@@ -80,25 +80,16 @@
         <div data-role="header" data-inset="true">
             <a href="#" data-icon="back" class="back ui-btn-left">Back</a>
             <h1 id="phead">Tweets</h1>
-        </div>
-        <div data-role="content">
-            
-            <div id="result-list"></div>
-           
-        </div>
-
-        
+        </div>        
     </script>
     <script type="text/template" id="tweetListTemp">
 
 
-        <div class="view">
-          
-                <h3><%- author %></h3>
-                <p><%- text %></p>
-                <hr />
-                <!-- <p><%- text %><div><%- author %></div></p> -->
-           
+        <div class="ui-listview" data-role="listview">
+          <li class="ui-li-has-thumb ui-body-a">
+                <h3 class="ui-btn-text"><%- author %></h3>
+                <p data-role="fieldcontain" class="ui-body-desc"><%- text %></p>
+           </li>
             
             
         

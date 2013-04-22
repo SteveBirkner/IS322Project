@@ -35,6 +35,7 @@ window.ProductListView = Backbone.View.extend({
   tagName:'ul',
     template: _.template($('#bbresults').html()),
     initialize:function () {
+        console.log("created product list view");
         this.model.bind("reset", this.render, this);
         var self = this;
         this.model.bind("add", function (product) {
@@ -43,9 +44,13 @@ window.ProductListView = Backbone.View.extend({
         });
     },
     events:{
-      "click li": "load"  
+      "mouseup li": "load"  
     },
     load: function(e){
+        //this is triggering twice, quick fix below but should be looked into
+        console.log("Click event");
+        console.log(e);
+        if($(e.currentTarget).attr("id") !== undefined)
          app.navigate("#product/" +$(e.currentTarget).attr("id"), {trigger:true, replace:false});
     },
     render:function (eventName) {
@@ -392,11 +397,12 @@ var AppRouter = Backbone.Router.extend({
     },
     product:function(n){
         //var item = productResults.findWhere({ sku: sku});
-        if(this.productList){
+        if(this.productList && n !== undefined){
             console.log(n);
             console.log(this.productList);
             console.log(this.productList.findWhere({id: parseInt(n)}));
             var m = this.productList.findWhere({id: parseInt(n)});
+            console.log("Loading single product page");
             this.changePage(new SingleProductView({model: m}));
         }
       //this.changePage(new SingleProductView({  
@@ -494,7 +500,7 @@ function betterSearches(str){
     console.log("No common: " + str);
     str = str.replace( /  +/g, ' ' );
     //read that split/join method was faster as of jan '13
-    
+    str = str.trim();
     
     str = str.split(' ').join(' OR ');
     console.log("Edit: " + str);
