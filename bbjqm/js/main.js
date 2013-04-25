@@ -140,6 +140,7 @@ window.SingleProductView = Backbone.View.extend({
         
         var name = this.model.get("name");
         favsColl.add(this.model);
+        this.model.save();
         console.log(favsColl);
         alert(name + " Added to Favorites");
         
@@ -245,20 +246,30 @@ window.FavListView = Backbone.View.extend({
     template:_.template($('#favResults').html()),
     initialize: function () {
        var self=this;
-       
        this.model.bind( 'reset', this.render, this);
        this.model.bind( 'add', function(favorite) {
-        
-            $(self.el).append( new TweetListTweetView({model: favorite}).render());
+            $(self.el).append( new FavoriteItemsListFavView({model: favorite}).render());
         
        });
+       console.log(this.model);
        
     },
-    
-    render: function () {
+    addOne: function(m){
+        console.log("Added one");
+        console.log(m);
+        $(this.el).append( new FavoriteItemsListFavView({model: m}).render());
+    },
+    addAll: function(){
+        console.log("Add all");
+        this.model.each(this.addOne, this);        
+    },
+    render: function (eventName) {
        this.$el.html(this.template());
-        
-        return this.el;
+        _.each(this.model.models, function (fav) {
+            console.log("appedeD");
+            $(this.el).append(new FavoriteItemsListFavView({model:fav}).render().el);
+        }, this);
+        return this;
     }
     
     
@@ -272,6 +283,7 @@ window.FavoriteItemsListFavView = Backbone.View.extend({
     template:_.template($('#fav-template').html()),
 
     initialize:function () {
+        console.log("Fav item");
         this.model.bind("change", this.render, this);
         this.model.bind("destroy", this.close, this);
     },
@@ -371,15 +383,20 @@ var AppRouter = Backbone.Router.extend({
         var self = this;
         console.log("here");
         console.log(this.favscoll);
-        this.favscoll.fetch({
+        self.favListView = new FavListView({model: self.favscoll});
+                self.changePage(self.favListView);
+        /*this.favscoll.fetch({
             success: function(){
+                console.log("Success");
+                console.log(this);
+                console.log(self.favscoll);
                 self.favListView = new FavListView({model: self.favscoll});
                 self.changePage(self.favListView);
                 
             }
             
         
-        });
+        });*/
         
     },
     products:function(s) {
