@@ -248,6 +248,7 @@ window.FavListView = Backbone.View.extend({
        var self=this;
        this.model.bind( 'reset', this.render, this);
        this.model.bind( 'add', function(favorite) {
+            favorite.set({id: favorite.get("sku")});
             $(self.el).append( new FavoriteItemsListFavView({model: favorite}).render());
         
        });
@@ -260,8 +261,9 @@ window.FavListView = Backbone.View.extend({
     
     load: function(e) {
         console.log(e);
-       
-         app.navigate("#favorites/" +$(e.currentTarget).attr("id"), {trigger:true, replace:false});
+        var click = $(e.currentTarget).attr("id");
+        if(click !== undefined && click != "undefined")
+         app.navigate("#favorites/" +click, {trigger:true, replace:false});
     },
     addOne: function(m){
         console.log("Added one");
@@ -275,7 +277,8 @@ window.FavListView = Backbone.View.extend({
     render: function (eventName) {
        this.$el.html(this.template());
         _.each(this.model.models, function (fav) {
-            console.log("appedeD");
+            console.log("appended");
+            console.log(fav);
             $(this.el).append(new FavoriteItemsListFavView({model:fav}).render().el);
         }, this);
         return this;
@@ -399,17 +402,13 @@ var AppRouter = Backbone.Router.extend({
     },
     fav: function (n) {
         console.log("Here");
-        
-        if(this.favscoll && n !== undefined){
+        if(this.favscoll && n !== undefined && parseInt(n) > 0){
             console.log(n);
             console.log(this.favscoll);
-            console.log(this.favscoll.findWhere({id: parseInt(n)}));
             var m = this.favscoll.findWhere({id: parseInt(n)});
             console.log("Loading single fav page");
             this.changePage(new SingleFavView({model: m}));
         }
-      
-        
     },
     products:function(s) {
         console.log('#product list');
