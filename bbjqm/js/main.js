@@ -260,7 +260,7 @@ window.FavListView = Backbone.View.extend({
     
     load: function(e) {
         console.log(e);
-        if($(e.currentTarget).attr("id") !== undefined)
+       
          app.navigate("#favorites/" +$(e.currentTarget).attr("id"), {trigger:true, replace:false});
     },
     addOne: function(m){
@@ -394,29 +394,18 @@ var AppRouter = Backbone.Router.extend({
         console.log("here");
         console.log(this.favscoll);
         self.favListView = new FavListView({model: self.favscoll});
-                self.changePage(self.favListView);
-        /*this.favscoll.fetch({
-            success: function(){
-                console.log("Success");
-                console.log(this);
-                console.log(self.favscoll);
-                self.favListView = new FavListView({model: self.favscoll});
-                self.changePage(self.favListView);
-                
-            }
-            
-        
-        });*/
+        self.changePage(self.favListView);
         
     },
     fav: function (n) {
         console.log("Here");
+        
         if(this.favscoll && n !== undefined){
             console.log(n);
             console.log(this.favscoll);
             console.log(this.favscoll.findWhere({id: parseInt(n)}));
             var m = this.favscoll.findWhere({id: parseInt(n)});
-            console.log("Loading single product page");
+            console.log("Loading single fav page");
             this.changePage(new SingleFavView({model: m}));
         }
       
