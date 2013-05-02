@@ -254,6 +254,15 @@ window.FavListView = Backbone.View.extend({
        console.log(this.model);
        
     },
+      events:{
+      "click li": "load"  
+    },
+    
+    load: function(e) {
+        console.log(e);
+        if($(e.currentTarget).attr("id") !== undefined)
+         app.navigate("#product/" +$(e.currentTarget).attr("id"), {trigger:true, replace:false});
+    },
     addOne: function(m){
         console.log("Added one");
         console.log(m);
@@ -361,6 +370,7 @@ var AppRouter = Backbone.Router.extend({
         "products/:s":"products",
         "product/:id":"product",
         "favorites/" : "favs",
+        "favorites/:id" : "fav",
         "tweets/:q" : "tweets"
     },
 
@@ -397,6 +407,11 @@ var AppRouter = Backbone.Router.extend({
             
         
         });*/
+        
+    },
+    fav: function () {
+        
+      
         
     },
     products:function(s) {
