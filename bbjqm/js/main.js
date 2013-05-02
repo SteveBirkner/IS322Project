@@ -261,7 +261,7 @@ window.FavListView = Backbone.View.extend({
     load: function(e) {
         console.log(e);
         if($(e.currentTarget).attr("id") !== undefined)
-         app.navigate("#product/" +$(e.currentTarget).attr("id"), {trigger:true, replace:false});
+         app.navigate("#favorites/" +$(e.currentTarget).attr("id"), {trigger:true, replace:false});
     },
     addOne: function(m){
         console.log("Added one");
@@ -409,8 +409,16 @@ var AppRouter = Backbone.Router.extend({
         });*/
         
     },
-    fav: function () {
-        
+    fav: function (n) {
+        console.log("Here");
+        if(this.favscoll && n !== undefined){
+            console.log(n);
+            console.log(this.favscoll);
+            console.log(this.favscoll.findWhere({id: parseInt(n)}));
+            var m = this.favscoll.findWhere({id: parseInt(n)});
+            console.log("Loading single product page");
+            this.changePage(new SingleFavView({model: m}));
+        }
       
         
     },
@@ -537,11 +545,8 @@ function betterSearches(str){
     console.log("Edit: " + str);
     return str;
 }
-function toauth() {
-    
-    //nothing to see yet
-    
-}
+
+
 
 function twitSearch(q, coll){
      // number of tweets to return
