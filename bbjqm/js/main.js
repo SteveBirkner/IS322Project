@@ -195,13 +195,18 @@ window.TweetListView = Backbone.View.extend({
        });
        
     },
-    
+    events: {//remove this on route change
+        "routes" : "close",
+    },
     render: function () {
        this.$el.html(this.template());
         
         return this.el;
+    },
+    close:function(){
+        this.unbind();
+        this.remove();
     }
-    
     
 
 });
@@ -217,7 +222,9 @@ window.TweetListTweetView = Backbone.View.extend({
         this.model.bind('destory', this.close(), this);
         
     },
-    
+    events: {//remove this on route change
+        "routes" : "close"
+    },
     render: function() {
         $(this.el).html(this.template(this.model.toJSON()));
         
@@ -256,7 +263,8 @@ window.FavListView = Backbone.View.extend({
        
     },
       events:{
-      "click li": "load"  
+      "click li": "load",
+      "routes": "close"
     },
     
     load: function(e) {
@@ -282,8 +290,11 @@ window.FavListView = Backbone.View.extend({
             $(this.el).append(new FavoriteItemsListFavView({model:fav}).render().el);
         }, this);
         return this;
+    },
+    close: function(){
+        this.unbind();
+        this.remove();
     }
-    
     
 
 });
