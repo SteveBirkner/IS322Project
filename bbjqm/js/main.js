@@ -80,11 +80,6 @@ window.ProductListItemView = Backbone.View.extend({
     render:function (eventName) {
         $(this.el).html(this.template(this.model.toJSON()));
         return this;
-    },
-
-    close:function () {
-        $(this.el).unbind();
-        $(this.el).remove();
     }
 });
 
@@ -131,10 +126,6 @@ window.SingleProductView = Backbone.View.extend({
         $(this.el).html(this.template(this.model.toJSON()));
       //this.$el.html(this.template(this.model.toJSON()));
       return this;
-    },
-    close: function(){
-        this.unbind();
-        this.remove();
     },
     addFav: function(){
         
@@ -202,10 +193,6 @@ window.TweetListView = Backbone.View.extend({
        this.$el.html(this.template());
         
         return this.el;
-    },
-    close:function(){
-        this.unbind();
-        this.remove();
     }
     
 
@@ -230,11 +217,6 @@ window.TweetListTweetView = Backbone.View.extend({
         
         return this.el;
     
-    },
-    
-    close: function () {
-        $(this.el).unbind();
-        $(this.el).remove();
     }
     
 });
@@ -290,10 +272,6 @@ window.FavListView = Backbone.View.extend({
             $(this.el).append(new FavoriteItemsListFavView({model:fav}).render().el);
         }, this);
         return this;
-    },
-    close: function(){
-        this.unbind();
-        this.remove();
     }
     
 
@@ -314,11 +292,6 @@ window.FavoriteItemsListFavView = Backbone.View.extend({
     render:function (eventName) {
         $(this.el).html(this.template(this.model.toJSON()));
         return this;
-    },
-
-    close:function () {
-        $(this.el).unbind();
-        $(this.el).remove();
     }
 });
 
@@ -338,10 +311,6 @@ window.SingleFavView = Backbone.View.extend({
         $(this.el).html(this.template(this.model.toJSON()));
      
       return this;
-    },
-    close: function(){
-        this.unbind();
-        this.remove();
     },
     removefav: function(){
         
@@ -491,6 +460,10 @@ $(document).ready(function () {
     console.log('document ready');
     app = new AppRouter();
     Backbone.history.start();
+    Backbone.View.prototype.close = function(){
+        this.remove();
+        this.unbind();
+    }
 });
 
 function search(str, collections){
