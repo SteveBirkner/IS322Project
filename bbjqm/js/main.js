@@ -344,10 +344,21 @@ window.Favorites = Backbone.Collection.extend({
     },
     model: ProductResult,
     urlRoot: "/favorites",
-    localStorage: new Backbone.LocalStorage("favorites")
+    localStorage: new Backbone.LocalStorage("Favorites")
     
 });
+define("favorites", ["localstorage"], function(){
+    var Favorites = Backbone.Collection.extend({
+        localStorage: new Backbone.LocalStorage("Favorites")
+    });    
+    return new Favorites();
+});
+require(["someCollection"], function(someCollection) {
+  // ready to use someCollection
+});
 var favsColl = new Favorites();
+
+
 
 var AppRouter = Backbone.Router.extend({
 
@@ -554,7 +565,14 @@ function twitSearch(q, coll){
     
 }
 
-
+require.config({
+    paths: {
+        jquery: "lib/jquery",
+        underscore: "lib/underscore",
+        backbone: "lib/backbone",
+        localstorage: "lib/backbone.localStorage"
+    }
+});
 
 
 
