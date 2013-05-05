@@ -130,9 +130,13 @@ window.SingleProductView = Backbone.View.extend({
     addFav: function(){
         
         var name = this.model.get("name");
-        favsColl.add(this.model);
+        var f = new Favorite(this.model.toJSON());
+        console.log(f);
+        //f.save();
+        favsColl.add(f);
+        f.save();
         //this.model.save();
-        favsColl.save();
+        
         console.log(favsColl);
         alert(name + " Added to Favorites");
         
@@ -239,8 +243,11 @@ window.FavListView = Backbone.View.extend({
        this.model.bind( 'reset', this.render, this);
        this.model.bind( 'add', function(favorite) {
             favorite.set({id: favorite.get("sku")});
+            var f = new Favorite(favorite);
+           // f.save();
             //favorite.save();
-            $(self.el).append( new FavoriteItemsListFavView({model: favorite}).render());
+            $(self.el).append( new FavoriteItemsListFavView({model: f}).render());
+          //  f.save();
         
        });
        console.log(this.model);
@@ -322,7 +329,7 @@ window.SingleFavView = Backbone.View.extend({
         var name = this.model.get("name");
         alert(name + " Removed From Favorites");
         favsColl.remove(this.model);
-        favsColl.save();
+       // favsColl.save();
         app.navigate("#favorites/", {trigger:true, replace:false});
         
         
@@ -339,9 +346,18 @@ window.SingleFavView = Backbone.View.extend({
     }
 });
 
-
-
-
+var Favorite = Backbone.Model.extend({
+    urlRoot: "/favorites",
+    initialize: function() {
+    },
+    defaults:  {
+        name: "undefined",
+        regularPrice: 0.00,
+        sku: 0,
+        image: "undefined"
+    }
+   
+});
 
 window.Favorites = Backbone.Collection.extend({
     initialize: function () {
