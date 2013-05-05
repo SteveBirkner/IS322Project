@@ -1,4 +1,3 @@
-var s = ""; //global search query -- delete once you get loading the collection working...
 window.HomeView = Backbone.View.extend({
 
     template:_.template($('#home').html()),
@@ -8,10 +7,8 @@ window.HomeView = Backbone.View.extend({
         return this;
     },
     events: {
-        //enter key triggers onEnter event
         "keypress":"onEnter",
         "click #fav" : "gotoFav"
-        
     },
     onEnter: function(e){
         if(e.which == 13) {
@@ -27,9 +24,7 @@ window.HomeView = Backbone.View.extend({
     gotoFav: function(e){
         //goes to favorties view
         console.log("in gotoFav");
-        app.navigate("#favorites/",{trigger: true});
-        
-        
+        app.navigate("#favorites/",{trigger: true});   
     }
 });
 window.ProductListView = Backbone.View.extend({
@@ -49,22 +44,17 @@ window.ProductListView = Backbone.View.extend({
     },
     load: function(e){
         //this is triggering twice, quick fix below but should be looked into
+        //edit: probably due to "zombie" view, implement a fix
         console.log("Click event");
         console.log(e);
         if($(e.currentTarget).attr("id") !== undefined)
          app.navigate("#product/" +$(e.currentTarget).attr("id"), {trigger:true, replace:false});
     },
     render:function (eventName) {
-        //_.each(this.model.models, function (product) {
-        //    $(this.el).append(new ProductListItemView({model:product}).render().el);
-        //}, this);
         this.$el.html(this.template());
         return this;
     }  
 });
-
-
-
 
 window.ProductListItemView = Backbone.View.extend({
 
@@ -83,7 +73,6 @@ window.ProductListItemView = Backbone.View.extend({
     }
 });
 
-
 //ProductResult Model
 var ProductResult = Backbone.Model.extend({
     urlRoot: "/products",
@@ -95,7 +84,6 @@ var ProductResult = Backbone.Model.extend({
         sku: 0,
         image: "undefined"
     }
-   
 });
 
 //ProductResults Collection
@@ -107,9 +95,6 @@ var ProductResults = Backbone.Collection.extend({
    url: "/products",
    localStorage: new Backbone.LocalStorage("productResults")
 });
-//Create global collections
-//var productResults = new ProductResults;
-
 
 window.SingleProductView = Backbone.View.extend({
     template: _.template($('#product-template').html()),
@@ -122,34 +107,23 @@ window.SingleProductView = Backbone.View.extend({
     },
     render: function() {
         console.log(this.model);
-        //console.log(this.model.get("name"));
         $(this.el).html(this.template(this.model.toJSON()));
-      //this.$el.html(this.template(this.model.toJSON()));
-      return this;
+        return this;
     },
-    addFav: function(){
-        
+    addFav: function(){  
         var name = this.model.get("name");
         var f = new Favorite(this.model.toJSON());
-        console.log(f);
-        //f.save();
+        console.log("Favorite added with 'addFav'");
         favsColl.add(f);
         f.save();
-        //this.model.save();
-        
         console.log(favsColl);
-        alert(name + " Added to Favorites");
-        
+        alert(name + " Added to Favorites");//improve this
     },
     tweet: function() {
         console.log("works");
         var q = this.model.get("name");
         app.navigate('tweets/' + q,{trigger: true, replace: false});
-        
         return false;
-        
-    
-        
     }
 });
 
@@ -162,9 +136,7 @@ window.Tweet = Backbone.Model.extend({
         author: "",
         text:""
     },
-    
     urlRoot: "/tweets"
-
 });
 
 window.TweetColl = Backbone.Collection.extend({
@@ -181,35 +153,27 @@ window.TweetListView = Backbone.View.extend({
     template:_.template($('#tweetlist-template').html()),
     initialize: function () {
        var self=this;
-       
        this.model.bind( 'reset', this.render, this);
        this.model.bind( 'add', function(tweet) {
             tweet.set({author: tweet.get("from_user"), text: tweet.get("text")});
-            
             $(self.el).append( new TweetListTweetView({model: tweet}).render());
         
        });
-       
     },
     events: {//remove this on route change
         "routes" : "close",
     },
     render: function () {
-       this.$el.html(this.template());
-        
+        this.$el.html(this.template());
         return this.el;
     }
-    
-
 });
-
 
 window.TweetListTweetView = Backbone.View.extend({
     tagName: 'li',
     
     initialize: function () {
-        this.template = _.template($('#tweetListTemp').html());
-        
+        this.template = _.template($('#tweetListTemp').html());     
         this.model.bind('change', this.render(), this);
         this.model.bind('destory', this.close(), this);
         
@@ -219,22 +183,11 @@ window.TweetListTweetView = Backbone.View.extend({
     },
     render: function() {
         $(this.el).html(this.template(this.model.toJSON()));
-        
         return this.el;
-    
     }
-    
 });
 
-
-
-
-
-
-
-
 // Favorites ////////////////////////////////////////
-
 window.FavListView = Backbone.View.extend({
     tagName: 'ul',
     template:_.template($('#favResults').html()),
@@ -243,22 +196,19 @@ window.FavListView = Backbone.View.extend({
        this.model.bind( 'reset', this.render, this);
        this.model.bind( 'add', function(favorite) {
             favorite.set({id: favorite.get("sku")});
-            var f = new Favorite(favorite);
-           // f.save();
-            //favorite.save();
+            var f = new Favorite(favorite);//might be better to use favorite.toJSON()
+            console.log("Favorite added with bind");
+            //save doesn't seem to be needed to be called here
+            //might even throw an error if it is
             $(self.el).append( new FavoriteItemsListFavView({model: f}).render());
-          //  f.save();
-        
        });
        console.log(this.model);
-       favsColl.fetch();
-       
+       favsColl.fetch(); 
     },
       events:{
       "click li": "load",
       "routes": "close"
     },
-    
     load: function(e) {
         console.log(e);
         var click = $(e.currentTarget).attr("id");
@@ -266,46 +216,38 @@ window.FavListView = Backbone.View.extend({
          app.navigate("#favorites/" +click, {trigger:true, replace:false});
     },
     addOne: function(m){
-        console.log("Added one");
-        console.log(m);
+        console.log("Added one");//don't think this gets called
         $(this.el).append( new FavoriteItemsListFavView({model: m}).render());
     },
     addAll: function(){
-        console.log("Add all");
+        console.log("Add all");//don't think this gets called
         this.model.each(this.addOne, this);        
     },
     render: function (eventName) {
        this.$el.html(this.template());
         _.each(this.model.models, function (fav) {
+            //from fetch I believe
             console.log("appended");
             console.log(fav);
             $(this.el).append(new FavoriteItemsListFavView({model:fav}).render().el);
         }, this);
         return this;
     }
-    
-
 });
 
 window.FavoriteItemsListFavView = Backbone.View.extend({
-
     tagName:"li",
-
     template:_.template($('#fav-template').html()),
-
     initialize:function () {
         console.log("Fav item");
         this.model.bind("change", this.render, this);
         this.model.bind("destroy", this.close, this);
-        
     },
-
     render:function (eventName) {
         $(this.el).html(this.template(this.model.toJSON()));
         return this;
     }
 });
-
 
 window.SingleFavView = Backbone.View.extend({
     template: _.template($('#singleFav-template').html()),
@@ -317,32 +259,23 @@ window.SingleFavView = Backbone.View.extend({
         "click #tweetTest" : "tweet"
     },
     render: function() {
-        console.log(this.model);
-      
+        console.log(this.model);   
         $(this.el).html(this.template(this.model.toJSON()));
-     
-      return this;
+        return this;
     },
     removefav: function(){
-        
         console.log(this.model.get("name"));
         var name = this.model.get("name");
         alert(name + " Removed From Favorites");
         favsColl.remove(this.model);
-       // favsColl.save();
+        //need to remove from localstorage here
         app.navigate("#favorites/", {trigger:true, replace:false});
-        
-        
     },
     tweet: function() {
         console.log("works");
         var q = this.model.get("name");
         app.navigate('tweets/' + q,{trigger: true});
-    
         return false;
-        
-    
-        
     }
 });
 
@@ -356,7 +289,6 @@ var Favorite = Backbone.Model.extend({
         sku: 0,
         image: "undefined"
     }
-   
 });
 
 window.Favorites = Backbone.Collection.extend({
@@ -366,20 +298,8 @@ window.Favorites = Backbone.Collection.extend({
     model: ProductResult,
     urlRoot: "/favorites",
     localStorage: new Backbone.LocalStorage("favorites")
-    
 });
-/*define("favorites", ["localstorage"], function(){
-    var Favorites = Backbone.Collection.extend({
-        localStorage: new Backbone.LocalStorage("Favorites")
-    });    
-    return new Favorites();
-});
-require(["someCollection"], function(someCollection) {
-  // ready to use someCollection
-});*/
 var favsColl = new Favorites();
-
-
 
 var AppRouter = Backbone.Router.extend({
 
@@ -427,7 +347,6 @@ var AppRouter = Backbone.Router.extend({
     },
     products:function(s) {
         console.log('#product list');
-        
         this.productList = new ProductResults();
         search(s, this.productList);
         var self = this;
@@ -435,17 +354,14 @@ var AppRouter = Backbone.Router.extend({
             success: function(){
                 console.log("succes product fetch");
                 self.productListView = new ProductListView({model:self.productList});
-                //$("body").html(self.productListView.render().el);
                 self.changePage(self.productListView);
             },
             error: function(){
                 console.log("failed");
             }
         });
-        //this.changePage(new bbProductResultsView({ m: this, page: "#results"}));
     },
     product:function(n){
-        //var item = productResults.findWhere({ sku: sku});
         if(this.productList && n !== undefined){
             console.log(n);
             console.log(this.productList);
@@ -454,7 +370,6 @@ var AppRouter = Backbone.Router.extend({
             console.log("Loading single product page");
             this.changePage(new SingleProductView({model: m}));
         }
-      //this.changePage(new SingleProductView({  
     },
     tweets: function(q) {
         console.log("tweet list");
@@ -466,14 +381,8 @@ var AppRouter = Backbone.Router.extend({
                 self.tweetListView = new TweetListView({model:self.tweetList});
                 self.changePage(self.tweetListView);
             }
-        
         });
-        
-        
-        
-        
     },
-   
 
     changePage:function (page) {
         $(page.el).attr('data-role', 'page');
@@ -486,13 +395,9 @@ var AppRouter = Backbone.Router.extend({
             this.firstPage = false;
             this.navigate("");
         }
-        else{
-            //this.navigate(page.options.page);
-        }
-        
+        //need to add page management to deal with "zombie" views
         $.mobile.changePage($(page.el), {changeHash:false, transition: transition});
     }
-
 });
 
 $(document).ready(function () {
@@ -516,17 +421,14 @@ function search(str, collections){
     crossDomain:true,
     success: function(data) {
         console.log(data.products);
-        //loop
-        //var p1 = new Product({name: "name", image: "image", id:"id", price:"price"});
-       for(var i = 0; i < data.products.length; i++){
-            collections.add(data.products[i]);
-        }
+        //{name: "name", image: "image", id:"id", price:"price"}
+        for(var i = 0; i < data.products.length; i++){
+             collections.add(data.products[i]);
+         }
     },
     dataType: 'jsonp',
- 
     });
 }
-
 function betterSearches(str){
     //attempt to provide twitter with an easier search query
     //twitter doesn't sort by number of matches in query string
@@ -536,8 +438,7 @@ function betterSearches(str){
     //not sure if it'd be better to just use the original search text instead :/
     //remove odd url hashtags in product name
     str = str.replace(/&([^;]+);/g, '');
-    console.log(str);
-    
+    console.log(str);   
     //remove special
     str = str.replace(/[`~!@#$%^&*()_|+\-=?;:',<>."\{\}\[\]\\\/]/gi, '').toLowerCase().trim();
     str = str.replace(/\d+/g, '');
@@ -551,13 +452,10 @@ function betterSearches(str){
     str = str.replace( /  +/g, ' ' );
     //read that split/join method was faster as of jan '13
     str = str.trim();
-    
     str = str.split(' ').join(' OR ');
     console.log("Edit: " + str);
     return str;
 }
-
-
 
 function twitSearch(q, coll){
      // number of tweets to return
@@ -571,34 +469,14 @@ function twitSearch(q, coll){
        cache: true,
     crossDomain:true,
        dataType : "jsonp" ,
-       timeout : 15000,
-       
+       timeout : 15000,       
        success : function(data){
-        
-        for(var i=0;i < data.results.length; i++){
-            coll.add(data.results[i]);
-        }
-        
+            for(var i=0;i < data.results.length; i++){
+                coll.add(data.results[i]);
+            }
        },
-       
        error: function() {
-        alert("Twitter Failed");
+            alert("Twitter Failed");
        },
-       
-       
     });
-    
 }
-
-/*require.config({
-    paths: {
-        jquery: "lib/jquery",
-        underscore: "lib/underscore",
-        backbone: "lib/backbone",
-        localstorage: "lib/backbone.localStorage"
-    }
-});*/
-
-
-
-
