@@ -317,6 +317,9 @@ window.SingleFavView = Backbone.View.extend({
         console.log(this.model.get("name"));
         var name = this.model.get("name");
         alert(name + " Removed From Favorites");
+        favsColl.remove(this.model);
+        app.navigate("#favorites/", {trigger:true, replace:false});
+        
         
     },
     tweet: function() {
