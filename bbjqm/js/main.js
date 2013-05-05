@@ -131,7 +131,8 @@ window.SingleProductView = Backbone.View.extend({
         
         var name = this.model.get("name");
         favsColl.add(this.model);
-        this.model.save();
+        //this.model.save();
+        favsColl.save();
         console.log(favsColl);
         alert(name + " Added to Favorites");
         
@@ -180,7 +181,7 @@ window.TweetListView = Backbone.View.extend({
        this.model.bind( 'reset', this.render, this);
        this.model.bind( 'add', function(tweet) {
             tweet.set({author: tweet.get("from_user"), text: tweet.get("text")});
-        
+            
             $(self.el).append( new TweetListTweetView({model: tweet}).render());
         
        });
@@ -238,10 +239,12 @@ window.FavListView = Backbone.View.extend({
        this.model.bind( 'reset', this.render, this);
        this.model.bind( 'add', function(favorite) {
             favorite.set({id: favorite.get("sku")});
+            //favorite.save();
             $(self.el).append( new FavoriteItemsListFavView({model: favorite}).render());
         
        });
        console.log(this.model);
+       favsColl.fetch();
        
     },
       events:{
@@ -287,6 +290,7 @@ window.FavoriteItemsListFavView = Backbone.View.extend({
         console.log("Fav item");
         this.model.bind("change", this.render, this);
         this.model.bind("destroy", this.close, this);
+        
     },
 
     render:function (eventName) {
@@ -318,6 +322,7 @@ window.SingleFavView = Backbone.View.extend({
         var name = this.model.get("name");
         alert(name + " Removed From Favorites");
         favsColl.remove(this.model);
+        favsColl.save();
         app.navigate("#favorites/", {trigger:true, replace:false});
         
         
@@ -344,10 +349,10 @@ window.Favorites = Backbone.Collection.extend({
     },
     model: ProductResult,
     urlRoot: "/favorites",
-    localStorage: new Backbone.LocalStorage("Favorites")
+    localStorage: new Backbone.LocalStorage("favorites")
     
 });
-define("favorites", ["localstorage"], function(){
+/*define("favorites", ["localstorage"], function(){
     var Favorites = Backbone.Collection.extend({
         localStorage: new Backbone.LocalStorage("Favorites")
     });    
@@ -355,7 +360,7 @@ define("favorites", ["localstorage"], function(){
 });
 require(["someCollection"], function(someCollection) {
   // ready to use someCollection
-});
+});*/
 var favsColl = new Favorites();
 
 
@@ -412,9 +417,13 @@ var AppRouter = Backbone.Router.extend({
         var self = this;
         this.productList.fetch({
             success: function(){
+                console.log("succes product fetch");
                 self.productListView = new ProductListView({model:self.productList});
                 //$("body").html(self.productListView.render().el);
                 self.changePage(self.productListView);
+            },
+            error: function(){
+                console.log("failed");
             }
         });
         //this.changePage(new bbProductResultsView({ m: this, page: "#results"}));
@@ -565,14 +574,14 @@ function twitSearch(q, coll){
     
 }
 
-require.config({
+/*require.config({
     paths: {
         jquery: "lib/jquery",
         underscore: "lib/underscore",
         backbone: "lib/backbone",
         localstorage: "lib/backbone.localStorage"
     }
-});
+});*/
 
 
 
