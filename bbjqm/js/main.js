@@ -123,27 +123,12 @@ window.SingleProductView = Backbone.View.extend({
         console.log("works");
         //var q = this.model.get("name");
         console.log(this.model.get("manufacturer"));
+        var tt = this.model.get("categoryPath").length;
         var cat;
-        //rewrite better...
-        if(this.model.get("categoryPath")[3] !== undefined){
-            cat = this.model.get("categoryPath")[3].name;
-        }
-        else{
-            if(this.model.get("categoryPath")[2] !== undefined){
-                cat = this.model.get("categoryPath")[2].name;
-            }
-            else{
-                if(this.model.get("categoryPath")[1] !== undefined){
-                    cat = this.model.get("categoryPath")[1].name;
-                }
-                else{
-                    if(this.model.get("categoryPath")[0] !== undefined){
-                        cat = this.model.get("categoryPath")[0].name;
-                    }
-                    else{
-                        cat = "";
-                    }
-                }
+        for(var i = tt; i > 0; i--){
+            if(this.model.get("categoryPath")[i] !== undefined){
+                cat = this.model.get("categoryPath")[i].name;
+                break;
             }
         }
         var q = this.model.get("manufacturer") + " " + cat;
@@ -300,27 +285,12 @@ window.SingleFavView = Backbone.View.extend({
         console.log("works");
         //var q = this.model.get("name");
         console.log(this.model.get("manufacturer"));
+        var tt = this.model.get("categoryPath").length;
         var cat;
-        //rewrite better...
-        if(this.model.get("categoryPath")[3] !== undefined){
-            cat = this.model.get("categoryPath")[3].name;
-        }
-        else{
-            if(this.model.get("categoryPath")[2] !== undefined){
-                cat = this.model.get("categoryPath")[2].name;
-            }
-            else{
-                if(this.model.get("categoryPath")[1] !== undefined){
-                    cat = this.model.get("categoryPath")[1].name;
-                }
-                else{
-                    if(this.model.get("categoryPath")[0] !== undefined){
-                        cat = this.model.get("categoryPath")[0].name;
-                    }
-                    else{
-                        cat = "";
-                    }
-                }
+        for(var i = tt; i > 0; i--){
+            if(this.model.get("categoryPath")[i] !== undefined){
+                cat = this.model.get("categoryPath")[i].name;
+                break;
             }
         }
         var q = this.model.get("manufacturer") + " " + cat;
