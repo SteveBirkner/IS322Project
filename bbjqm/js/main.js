@@ -123,8 +123,30 @@ window.SingleProductView = Backbone.View.extend({
         console.log("works");
         //var q = this.model.get("name");
         console.log(this.model.get("manufacturer"));
-        console.log(this.model.get("categoryPath")[3].name);
-        var q = this.model.get("manufacturer") + " " + this.model.get("categoryPath")[3].name;
+        var cat;
+        //rewrite better...
+        if(this.model.get("categoryPath")[3].name !== undefined){
+            cat = this.model.get("categoryPath")[3].name;
+        }
+        else{
+            if(this.model.get("categoryPath")[2].name !== undefined){
+                cat = this.model.get("categoryPath")[2].name;
+            }
+            else{
+                if(this.model.get("categoryPath")[1].name !== undefined){
+                    cat = this.model.get("categoryPath")[1].name;
+                }
+                else{
+                    if(this.model.get("categoryPath")[0].name !== undefined){
+                        cat = this.model.get("categoryPath")[0].name;
+                    }
+                    else{
+                        cat = "";
+                    }
+                }
+            }
+        }
+        var q = this.model.get("manufacturer") + " " + cat;
         app.navigate('tweets/' + q,{trigger: true, replace: false});
         return false;
     }
@@ -278,8 +300,30 @@ window.SingleFavView = Backbone.View.extend({
         console.log("works");
         //var q = this.model.get("name");
         console.log(this.model.get("manufacturer"));
-        console.log(this.model.get("categoryPath")[3].name);
-        var q = this.model.get("manufacturer") + " " + this.model.get("categoryPath")[3].name;
+        var cat;
+        //rewrite better...
+        if(this.model.get("categoryPath")[3].name !== undefined){
+            cat = this.model.get("categoryPath")[3].name;
+        }
+        else{
+            if(this.model.get("categoryPath")[2].name !== undefined){
+                cat = this.model.get("categoryPath")[2].name;
+            }
+            else{
+                if(this.model.get("categoryPath")[1].name !== undefined){
+                    cat = this.model.get("categoryPath")[1].name;
+                }
+                else{
+                    if(this.model.get("categoryPath")[0].name !== undefined){
+                        cat = this.model.get("categoryPath")[0].name;
+                    }
+                    else{
+                        cat = "";
+                    }
+                }
+            }
+        }
+        var q = this.model.get("manufacturer") + " " + cat;
         app.navigate('tweets/' + q,{trigger: true, replace: false});
         return false;
     }
@@ -450,7 +494,7 @@ function betterSearches(str){
     str = str.replace(/\d+/g, '');
     console.log("Replaced: " + str);
     //filter common
-    var common = ['just', 'with', 'or', 'the', 'it', 'is', 'a', 'an', 'by', 'to', 'you', 'me', 'he', 'she', 'they', 'we', 'how', 'i', 'are', 'to', 'for', 'of', 'gb','mb','tb'];
+    var common = ['made', 'just', 'with', 'or', 'the', 'it', 'is', 'a', 'an', 'by', 'to', 'you', 'me', 'he', 'she', 'they', 'we', 'how', 'i', 'are', 'to', 'for', 'of', 'gb','mb','tb'];
     for(var i = 0; i < common.length; i++){
         str = str.split(' ' + common[i] + ' ').join(' ');
     }
