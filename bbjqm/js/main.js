@@ -494,7 +494,7 @@ function betterSearches(str){
     str = str.replace(/\d+/g, '');
     console.log("Replaced: " + str);
     //filter common
-    var common = ['made', 'just', 'with', 'or', 'the', 'it', 'is', 'a', 'an', 'by', 'to', 'you', 'me', 'he', 'she', 'they', 'we', 'how', 'i', 'are', 'to', 'for', 'of', 'gb','mb','tb'];
+    var common = ['all', 'made', 'just', 'with', 'or', 'the', 'it', 'is', 'a', 'an', 'by', 'to', 'you', 'me', 'he', 'she', 'they', 'we', 'how', 'i', 'are', 'to', 'for', 'of', 'gb','mb','tb'];
     for(var i = 0; i < common.length; i++){
         str = str.split(' ' + common[i] + ' ').join(' ');
     }
