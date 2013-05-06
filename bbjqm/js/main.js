@@ -125,19 +125,19 @@ window.SingleProductView = Backbone.View.extend({
         console.log(this.model.get("manufacturer"));
         var cat;
         //rewrite better...
-        if(this.model.get("categoryPath")[3].name !== undefined){
+        if(this.model.get("categoryPath")[3] !== undefined){
             cat = this.model.get("categoryPath")[3].name;
         }
         else{
-            if(this.model.get("categoryPath")[2].name !== undefined){
+            if(this.model.get("categoryPath")[2] !== undefined){
                 cat = this.model.get("categoryPath")[2].name;
             }
             else{
-                if(this.model.get("categoryPath")[1].name !== undefined){
+                if(this.model.get("categoryPath")[1] !== undefined){
                     cat = this.model.get("categoryPath")[1].name;
                 }
                 else{
-                    if(this.model.get("categoryPath")[0].name !== undefined){
+                    if(this.model.get("categoryPath")[0] !== undefined){
                         cat = this.model.get("categoryPath")[0].name;
                     }
                     else{
@@ -302,19 +302,19 @@ window.SingleFavView = Backbone.View.extend({
         console.log(this.model.get("manufacturer"));
         var cat;
         //rewrite better...
-        if(this.model.get("categoryPath")[3].name !== undefined){
+        if(this.model.get("categoryPath")[3] !== undefined){
             cat = this.model.get("categoryPath")[3].name;
         }
         else{
-            if(this.model.get("categoryPath")[2].name !== undefined){
+            if(this.model.get("categoryPath")[2] !== undefined){
                 cat = this.model.get("categoryPath")[2].name;
             }
             else{
-                if(this.model.get("categoryPath")[1].name !== undefined){
+                if(this.model.get("categoryPath")[1] !== undefined){
                     cat = this.model.get("categoryPath")[1].name;
                 }
                 else{
-                    if(this.model.get("categoryPath")[0].name !== undefined){
+                    if(this.model.get("categoryPath")[0] !== undefined){
                         cat = this.model.get("categoryPath")[0].name;
                     }
                     else{
