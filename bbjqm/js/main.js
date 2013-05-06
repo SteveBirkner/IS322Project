@@ -121,7 +121,10 @@ window.SingleProductView = Backbone.View.extend({
     },
     tweet: function() {
         console.log("works");
-        var q = this.model.get("name");
+        //var q = this.model.get("name");
+        console.log(this.model.get("manufacturer"));
+        console.log(this.model.get("categoryPath")[3].name);
+        var q = this.model.get("manufacturer") + " " + this.model.get("categoryPath")[3].name;
         app.navigate('tweets/' + q,{trigger: true, replace: false});
         return false;
     }
@@ -273,8 +276,11 @@ window.SingleFavView = Backbone.View.extend({
     },
     tweet: function() {
         console.log("works");
-        var q = this.model.get("name");
-        app.navigate('tweets/' + q,{trigger: true});
+        //var q = this.model.get("name");
+        console.log(this.model.get("manufacturer"));
+        console.log(this.model.get("categoryPath")[3].name);
+        var q = this.model.get("manufacturer") + " " + this.model.get("categoryPath")[3].name;
+        app.navigate('tweets/' + q,{trigger: true, replace: false});
         return false;
     }
 });
@@ -413,7 +419,7 @@ $(document).ready(function () {
 function search(str, collections){
     console.log("Running query");
     var apikey = "d9cbk342np3k8jj9ntmybz5f";
-    var url = "http://api.remix.bestbuy.com/v1/products(name=" + escape(str + "*") + "&(bias(name, -30)|bias(regularPrice,50)))?apiKey=" + apikey + "&show=name,sku,regularPrice,image,longDescriptionHTML,&format=json";
+    var url = "http://api.remix.bestbuy.com/v1/products(name=" + escape(str + "*") + "&(bias(name, -30)|bias(regularPrice,50)))?apiKey=" + apikey + "&show=name,sku,regularPrice,image,longDescriptionHTML,manufacturer,categoryPath.name&format=json";
     $.ajax({
     type: "GET",
     url: url,
