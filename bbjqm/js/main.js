@@ -472,7 +472,7 @@ function betterSearches(str){
     str = str.replace( /  +/g, ' ' );
     //read that split/join method was faster as of jan '13
     str = str.trim();
-    str = str.split(' ').join(' OR ');
+    //str = str.split(' ').join(' OR ');
     console.log("Edit: " + str);
     return str;
 }
